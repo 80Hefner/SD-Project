@@ -1,0 +1,31 @@
+-----------------------------------------
+| PROJETO DE SIDTEMAS DISTRIBUIDOS (SD) |
+_________________________________________
+
+- RESUMO
+	. Aplicação parecida com "STAYAWAY COVID". Forma de cliente/servidor através de sockets e threads! Não é necessária a preocupação com a privacidade dos dados pessoais que podem ser livremente comunicados e armazenados no servidor. Mapa é uma grelha de N x N locais possíveis de localização (pares discretos de índices). Não é necessário neste projeto implementar um sistema de datas.
+
+
+
+- FUNCIONALIDADES
+
+- - FUNCIONALIDADES BÁSICAS
+	. Login e registar um utilizador. Sempre que um utilizador deseja interagir com o serviço, estabelecer conexão e ser autenticado pelo servidor.
+	. Manter o serviço atualizado com a localização atual do Utilizador.
+	. Utilizador saber dado número de pessoas numa dada localização.
+	. Utilizador saber quando não há ninguém numa dada localização.
+	. Utilizador comunicar ao servidor que está doente. Depois desta informação, Utilizador não pode interagir mais com o Servidor, uma vez que está em isolamento. 
+
+- - FUNCIONALIDADES ADICIONAIS
+	. Servidor notificar todos os Utilizador que estiveram em contacto com um doente. Ou seja, que se tenham cruzado (estado numa mesma localização ao mesmo tempo)
+	. Um Utilizador com autorização especial pode ver o mapa indicando em cada posição, quantos utilizador e quantos doentes (utilizadores que mais tarde informaram contrair a infeção) visitaram cada posição.
+
+
+
+- ELEMENTOS NECESSÁRIOS
+
+- - CLIENTE
+	. Clietne deve oferecer uma interface com o Utilizador que permita suportar as funcionalidades acima descritas. Usar em JAVA threads e sockets TCP.
+
+- - SERVIDOR
+	. Usar em JAVA threads e sockets TCP. Manter em memória a informação relevante para suportar as funcionalidades descritass acima. Formato binário através apenas Data[Input|Output]Stream. Threads do servidor não devem escrever em mais do que um scoket, devendo as escritas serem feitas por threads associadas a esse socket.
