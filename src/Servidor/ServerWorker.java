@@ -46,7 +46,7 @@ class ServerWorker implements Runnable {
                             logado = true;
 
                     default:
-                        out.writeUTF("Opção inválida");
+                        out.writeUTF("Opção inválida\n\n");
                         out.flush();
                         break;
                 }
@@ -60,6 +60,8 @@ class ServerWorker implements Runnable {
             e.printStackTrace();
         }
     }
+
+
 
     private Utilizador efetuaLogin (DataInputStream in, DataOutputStream out) {
         String username = null;

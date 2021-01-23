@@ -37,8 +37,31 @@ public class ClientWorker implements Runnable {
                         System.out.println("SERVIDOR: " + resposta);
                         break;
 
+                    case "1":
+                        out.writeUTF(opcao);
+                        out.flush();
+
+                        resposta = in.readUTF();
+                        System.out.print(resposta);
+                        opcao = systemIn.readLine();
+                        out.writeUTF(opcao);
+                        out.flush();
+
+                        resposta = in.readUTF();
+                        System.out.print(resposta);
+                        opcao = systemIn.readLine();
+                        out.writeUTF(opcao);
+                        out.flush();
+
+                        resposta = in.readUTF();
+                        System.out.print(resposta);
+                        break;
+
                     default:
-                        System.out.println("Opção inválida\n");
+                        out.writeUTF(opcao);
+                        out.flush();
+                        resposta = in.readUTF();
+                        System.out.print(resposta);
                         printOpcoes();
                         break;
                 }
@@ -57,8 +80,8 @@ public class ClientWorker implements Runnable {
 
     public void printOpcoes () {
         System.out.println("END - SAIR");
-        System.out.println("0 - Logar");
-        System.out.println("1 - Registar");
+        System.out.println("1 - Logar");
+        System.out.println("2 - Registar");
         System.out.printf("OPCAO: ");
     }
 }
