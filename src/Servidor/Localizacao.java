@@ -28,5 +28,6 @@ public class Localizacao {
         this.utilizadoresAtuais.add(utilizador);
         this.utilizadoresPassados.add(utilizador);
     }
+
 }
 

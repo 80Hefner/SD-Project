@@ -76,11 +76,7 @@ class ServerWorker implements Runnable {
             out.flush();
             String password = in.readUTF();
 
-            if (!mapaUtilizadores.containsKey(username) || !mapaUtilizadores.get(username).getPassword().equals(password)) {
-                out.writeUTF("Cardenciais erradas");
-            } else {
-                out.writeUTF("Logado com sucesso");
-            }
+            out.writeBoolean(!mapaUtilizadores.containsKey(username) || !mapaUtilizadores.get(username).getPassword().equals(password));
 
         } catch (IOException e) {
             e.printStackTrace();

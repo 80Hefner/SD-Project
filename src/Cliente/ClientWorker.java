@@ -26,11 +26,11 @@ public class ClientWorker implements Runnable {
             while (continua) {
 
                 opcao = systemIn.readLine();
+                out.writeUTF(opcao);
+                out.flush();
 
                 switch (opcao) {
                     case "END":
-                        out.writeUTF(opcao);
-                        out.flush();
                         System.out.println("É o fim para mim");
                         continua = false;
                         resposta = in.readUTF();
@@ -38,9 +38,7 @@ public class ClientWorker implements Runnable {
                         break;
 
                     case "1":
-                        out.writeUTF(opcao);
-                        out.flush();
-
+                        System.out.printf("");
                         resposta = in.readUTF();
                         System.out.print(resposta);
                         opcao = systemIn.readLine();
@@ -58,8 +56,6 @@ public class ClientWorker implements Runnable {
                         break;
 
                     default:
-                        out.writeUTF(opcao);
-                        out.flush();
                         resposta = in.readUTF();
                         System.out.print(resposta);
                         printOpcoes();

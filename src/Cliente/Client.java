@@ -10,6 +10,7 @@ public class Client {
         Socket socket = new Socket("localhost", 12345);
         Thread workerClient = new Thread( new ClientWorker(socket) );
         workerClient.start();
+
     }
 
 }
