@@ -1,16 +1,17 @@
-package Servidor;
+package Classes;
 
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Utilizador {
 
+    private int id;
     private String username;
     private String password;
     private boolean admin;
     private int localizacaoX;
     private int localizacaoY;
-    private boolean loggado;
+    private boolean logado;
     private Set<String> utilizadoresComQuemContactou;
     private ReentrantLock lockUtilizador;
 
@@ -23,7 +24,7 @@ public class Utilizador {
         this.localizacaoY = r.nextInt(dimensao);
 
         this.admin = false;
-        this.loggado = false;
+        this.logado = false;
         this.utilizadoresComQuemContactou = new TreeSet<>();
         this.lockUtilizador = new ReentrantLock();
     }
@@ -35,7 +36,7 @@ public class Utilizador {
         this.localizacaoX = localizacaoX;
         this.localizacaoY = localizacaoY;
         this.utilizadoresComQuemContactou = utilizadoresComQuemContactou;
-        this.loggado = false;
+        this.logado = false;
         this.lockUtilizador = new ReentrantLock();
     }
 
@@ -59,4 +60,8 @@ public class Utilizador {
     public String getPassword() {
         return password;
     }
+
+    public void login() {this.logado = true;}
+
+    public void logout() {this.logado = false;}
 }

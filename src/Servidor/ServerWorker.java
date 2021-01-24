@@ -1,53 +1,61 @@
 package Servidor;
 
+import Classes.Localizacao;
+import Classes.Utilizador;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 class ServerWorker implements Runnable {
 
-    private Socket socket;
+    private final Socket socket;
+    private final DataOutputStream dos;
+    private final DataInputStream dis;
     private Map<String, Utilizador> mapaUtilizadores;
     private Map<Integer, Localizacao> mapaLocalizacoes;
+    private final ReentrantLock lockMapaUtilizadores;
+    private Utilizador userAtual = null;
 
-    public ServerWorker(Socket socket, Map<String, Utilizador> mapaUtilizadores, Map<Integer, Localizacao> mapaLocalizacoes) {
+    public ServerWorker(Socket socket, Map<String, Utilizador> mapaUtilizadores, Map<Integer, Localizacao> mapaLocalizacoes, ReentrantLock lockMapaUtilizadores) throws IOException {
         this.socket = socket;
+        this.dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+        this.dis = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
         this.mapaUtilizadores = mapaUtilizadores;
         this.mapaLocalizacoes = mapaLocalizacoes;
+        this.lockMapaUtilizadores = lockMapaUtilizadores;
     }
 
     @Override
     public void run() {
         try {
-
-            DataInputStream in = new DataInputStream(new BufferedInputStream(this.socket.getInputStream()));
-            DataOutputStream out = new DataOutputStream(new BufferedOutputStream(this.socket.getOutputStream()));
-
-            boolean logado = false;
-            Utilizador userAtual = null;
-
             String line;
             boolean continua = true;
 
             while (continua) {
-                line = in.readUTF();
+                line = dis.readUTF();
 
                 switch (line) {
-
-                    case "END":
-                        out.writeUTF("Tome cuidado");
-                        out.flush();
+                    case "exit":
                         continua=false;
                         break;
 
-                    case "1":
-                        userAtual = efetuaLogin(in, out);
-                        if (userAtual!=null)
-                            logado = true;
+                    case "login":
+                        efetuaLogin();
+                        break;
 
+                    case "logout":
+                        efetuaLogout();
+                        break;
+
+                    case "registar":
+                        efetuaRegisto();
+                        break;
+//todo atualizar localizacao
                     default:
-                        out.writeUTF("Opção inválida\n\n");
-                        out.flush();
+                        dos.writeUTF("Opção inválida\n\n");
+                        dos.flush();
                         break;
                 }
             }
@@ -63,25 +71,40 @@ class ServerWorker implements Runnable {
 
 
 
-    private Utilizador efetuaLogin (DataInputStream in, DataOutputStream out) {
-        String username = null;
-        
-        try {
+    private void efetuaLogin() throws IOException {
+        String username = dis.readUTF();
+        String password = dis.readUTF();
 
-            out.writeUTF("Nome de Utilizador:");
-            out.flush();
-            username = in.readUTF();
+        dos.writeBoolean(mapaUtilizadores.containsKey(username) && mapaUtilizadores.get(username).getPassword().equals(password));
+        dos.flush();
 
-            out.writeUTF("Password do Utilizador:");
-            out.flush();
-            String password = in.readUTF();
+        userAtual = mapaUtilizadores.get(username);
+        userAtual.login();
+    }
 
-            out.writeBoolean(!mapaUtilizadores.containsKey(username) || !mapaUtilizadores.get(username).getPassword().equals(password));
+    private void efetuaLogout() throws IOException {
+        userAtual.logout();
+        userAtual = null;
 
-        } catch (IOException e) {
-            e.printStackTrace();
+        dos.writeBoolean(true);
+        dos.flush();
+    }
+
+    private void efetuaRegisto() throws IOException {
+        String username = dis.readUTF();
+        String password = dis.readUTF();
+
+        if (mapaUtilizadores.containsKey(username)) {
+            dos.writeBoolean(false);
+            dos.flush();
         }
+        else {
+            mapaUtilizadores.put(username, new Utilizador(username, password, Servidor.dimensao)); //todo inserir no mapa localizaçoes
+            userAtual = mapaUtilizadores.get(username);
+            userAtual.login();
 
-        return mapaUtilizadores.get(username);
+            dos.writeBoolean(true);
+            dos.flush();
+        }
     }
 }

@@ -1,22 +1,26 @@
 package Servidor;
 
+import Classes.Localizacao;
+import Classes.Utilizador;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 public class Servidor {
 
-    public static void main(String[] args) throws IOException {
+    static final int dimensao = 10;
 
-        final int dimensao = 10;
+    public static void main(String[] args) throws IOException { //todo::::::: try catch aqui
 
-        Map<Integer,Localizacao> mapaLocalizacoes = new TreeMap<Integer, Localizacao>();
-        Map<String,Utilizador> mapaUtilizadores = new TreeMap<String, Utilizador>();
-
+        Map<Integer, Localizacao> mapaLocalizacoes = new TreeMap<Integer, Localizacao>();
+        Map<String, Utilizador> mapaUtilizadores = new TreeMap<String, Utilizador>(); //todo criar classe para gerir mapas para limpar main
+        ReentrantLock lockMapaUtilizadores = new ReentrantLock();
 
         for (int linha = 0; linha<dimensao; linha++) {
             for (int coluna = 0; coluna<dimensao; coluna++) {
@@ -42,7 +46,7 @@ public class Servidor {
 
         while (true) {
             Socket socket = ss.accept();
-            Thread worker = new Thread (new ServerWorker(socket, mapaUtilizadores, mapaLocalizacoes));
+            Thread worker = new Thread (new ServerWorker(socket, mapaUtilizadores, mapaLocalizacoes, lockMapaUtilizadores));
             worker.start();
         }
 
