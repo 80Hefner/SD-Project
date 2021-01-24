@@ -1,7 +1,7 @@
 package Classes;
 
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -9,9 +9,8 @@ public class Localizacao {
 
     private int localizacaoX;
     private int localizacaoY;
-    private Set<String> utilizadoresAtuais;
-    private Set<String> utilizadoresPassados;
-    private Set<String> utilizadoresInfetados;
+    private Map<String,Utilizador> utilizadoresAtuais;
+    private Map<String,Utilizador> utilizadoresPassados;
 
     private ReentrantLock lockLocalizacao = new ReentrantLock();
     private Condition condLocalizacao = lockLocalizacao.newCondition();
@@ -19,15 +18,27 @@ public class Localizacao {
     public Localizacao(int localizacaoX, int localizacaoY) {
         this.localizacaoX = localizacaoX;
         this.localizacaoY = localizacaoY;
-        this.utilizadoresAtuais = new TreeSet<String>();
-        this.utilizadoresPassados = new TreeSet<String>();
-        this.utilizadoresInfetados = new TreeSet<String>();
+        this.utilizadoresAtuais = new TreeMap<String,Utilizador>();
+        this.utilizadoresPassados = new TreeMap<String,Utilizador>();
     }
 
-    public void adicionaUtilizador (String utilizador) {
-        this.utilizadoresAtuais.add(utilizador);
-        this.utilizadoresPassados.add(utilizador);
+    public void adicionaUtilizadorLocalizacao (Utilizador utilizador) {
+        String username = utilizador.getUsername();
+
+        this.utilizadoresAtuais.put(username, utilizador);
+        if (!this.utilizadoresPassados.containsKey(username)) {
+            this.utilizadoresPassados.put(username, utilizador);
+        }
+
+        for (Utilizador u : this.utilizadoresAtuais.values()) {
+            if ( !u.getUsername().equals(username) ) {
+                utilizador.adicionaUtilizador(u);
+                u.adicionaUtilizador(utilizador);
+            }
+        }
     }
+
+
 
 }
 

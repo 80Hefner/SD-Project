@@ -5,7 +5,6 @@ import java.io.*;
 public class Client {
 
     private final BufferedReader systemIn;
-    private int opcoesSize;
     private ClientStub currentUser;
 
     public Client() throws IOException {
@@ -82,6 +81,7 @@ public class Client {
 
     private void executaMenuPrincipal() throws IOException {
         boolean continua = true;
+        // todo boolean infetado
 
         while (continua) {
             try {

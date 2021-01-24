@@ -1,6 +1,7 @@
 package Servidor;
 
 import Classes.Localizacao;
+import Classes.MapasAplicacao;
 import Classes.Utilizador;
 
 import java.io.*;
@@ -18,6 +19,7 @@ public class Servidor {
 
     public static void main(String[] args) throws IOException { //todo::::::: try catch aqui
 
+        /*
         Map<Integer, Localizacao> mapaLocalizacoes = new TreeMap<Integer, Localizacao>();
         Map<String, Utilizador> mapaUtilizadores = new TreeMap<String, Utilizador>(); //todo criar classe para gerir mapas para limpar main
         ReentrantLock lockMapaUtilizadores = new ReentrantLock();
@@ -42,11 +44,15 @@ public class Servidor {
         mapaUtilizadores.put (user3.getUsername(), user3);
         mapaLocalizacoes.get(5*dimensao + 5).adicionaUtilizador(user3.getUsername());
 
+         */
+
+        MapasAplicacao mapasAplicacao = new MapasAplicacao(dimensao);
         ServerSocket ss = new ServerSocket(12345);
 
         while (true) {
             Socket socket = ss.accept();
-            Thread worker = new Thread (new ServerWorker(socket, mapaUtilizadores, mapaLocalizacoes, lockMapaUtilizadores));
+            //Thread worker = new Thread (new ServerWorker(socket, mapaUtilizadores, mapaLocalizacoes, lockMapaUtilizadores));
+            Thread worker = new Thread (new ServerWorker(socket, mapasAplicacao));
             worker.start();
         }
 

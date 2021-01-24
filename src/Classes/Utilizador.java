@@ -1,18 +1,19 @@
 package Classes;
 
 import java.util.*;
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Utilizador {
 
-    private int id;
     private String username;
     private String password;
     private boolean admin;
     private int localizacaoX;
     private int localizacaoY;
     private boolean logado;
-    private Set<String> utilizadoresComQuemContactou;
+    private boolean infetado;
+    private Map<String,Utilizador> utilizadoresComQuemContactou;
     private ReentrantLock lockUtilizador;
 
     public Utilizador(String username, String password, int dimensao) {
@@ -25,11 +26,12 @@ public class Utilizador {
 
         this.admin = false;
         this.logado = false;
-        this.utilizadoresComQuemContactou = new TreeSet<>();
+        this.infetado = false;
+        this.utilizadoresComQuemContactou = new TreeMap<String,Utilizador>();
         this.lockUtilizador = new ReentrantLock();
     }
 
-    public Utilizador(String username, String password, boolean admin, int localizacaoX, int localizacaoY, TreeSet<String> utilizadoresComQuemContactou) {
+    public Utilizador(String username, String password, boolean admin, int localizacaoX, int localizacaoY, TreeMap<String,Utilizador> utilizadoresComQuemContactou) {
         this.admin = admin;
         this.username = username;
         this.password = password;
@@ -37,10 +39,11 @@ public class Utilizador {
         this.localizacaoY = localizacaoY;
         this.utilizadoresComQuemContactou = utilizadoresComQuemContactou;
         this.logado = false;
+        this.infetado = false;
         this.lockUtilizador = new ReentrantLock();
     }
 
-
+/*
     public void alteraLocalizacao (int novoX, int novoY, Set<String> novosContactos ) {
         lockUtilizador.lock();
         try {
@@ -51,7 +54,7 @@ public class Utilizador {
             lockUtilizador.unlock();
         }
     }
-
+ */
 
     public String getUsername() {
         return username;
@@ -61,7 +64,22 @@ public class Utilizador {
         return password;
     }
 
+    public int getLocalizacaoX() {
+        return localizacaoX;
+    }
+
+    public int getLocalizacaoY() {
+        return localizacaoY;
+    }
+
     public void login() {this.logado = true;}
 
     public void logout() {this.logado = false;}
+
+
+    public void adicionaUtilizador (Utilizador utilizador) {
+        if ( !this.utilizadoresComQuemContactou.containsKey( utilizador.getUsername()) ) {
+            this.utilizadoresComQuemContactou.put( utilizador.getUsername(), utilizador );
+        }
+    }
 }

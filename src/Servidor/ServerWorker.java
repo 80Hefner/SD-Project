@@ -1,6 +1,7 @@
 package Servidor;
 
 import Classes.Localizacao;
+import Classes.MapasAplicacao;
 import Classes.Utilizador;
 
 import java.io.*;
@@ -13,18 +14,14 @@ class ServerWorker implements Runnable {
     private final Socket socket;
     private final DataOutputStream dos;
     private final DataInputStream dis;
-    private Map<String, Utilizador> mapaUtilizadores;
-    private Map<Integer, Localizacao> mapaLocalizacoes;
-    private final ReentrantLock lockMapaUtilizadores;
+    private MapasAplicacao mapasAplicacao;
     private Utilizador userAtual = null;
 
-    public ServerWorker(Socket socket, Map<String, Utilizador> mapaUtilizadores, Map<Integer, Localizacao> mapaLocalizacoes, ReentrantLock lockMapaUtilizadores) throws IOException {
+    public ServerWorker (Socket socket, MapasAplicacao mapasAplicacao) throws IOException {
         this.socket = socket;
-        this.dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+        this.mapasAplicacao = mapasAplicacao;
         this.dis = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
-        this.mapaUtilizadores = mapaUtilizadores;
-        this.mapaLocalizacoes = mapaLocalizacoes;
-        this.lockMapaUtilizadores = lockMapaUtilizadores;
+        this.dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
     }
 
     @Override
@@ -75,10 +72,10 @@ class ServerWorker implements Runnable {
         String username = dis.readUTF();
         String password = dis.readUTF();
 
-        dos.writeBoolean(mapaUtilizadores.containsKey(username) && mapaUtilizadores.get(username).getPassword().equals(password));
+        dos.writeBoolean(mapasAplicacao.getMapaUtilizadores().containsKey(username) && mapasAplicacao.getMapaUtilizadores().get(username).getPassword().equals(password));
         dos.flush();
 
-        userAtual = mapaUtilizadores.get(username);
+        userAtual = mapasAplicacao.getMapaUtilizadores().get(username);
         userAtual.login();
     }
 
@@ -94,14 +91,17 @@ class ServerWorker implements Runnable {
         String username = dis.readUTF();
         String password = dis.readUTF();
 
-        if (mapaUtilizadores.containsKey(username)) {
+        if (mapasAplicacao.getMapaUtilizadores().containsKey(username)) {
             dos.writeBoolean(false);
             dos.flush();
         }
         else {
-            mapaUtilizadores.put(username, new Utilizador(username, password, Servidor.dimensao)); //todo inserir no mapa localizaçoes
-            userAtual = mapaUtilizadores.get(username);
+            mapasAplicacao.getMapaUtilizadores().put(username, new Utilizador(username, password, Servidor.dimensao));
+            userAtual = mapasAplicacao.getMapaUtilizadores().get(username);
             userAtual.login();
+
+            Localizacao localizacao = mapasAplicacao.getLocalizacao(userAtual.getLocalizacaoX(), userAtual.getLocalizacaoY(), Servidor.dimensao);
+            localizacao.adicionaUtilizadorLocalizacao(userAtual);
 
             dos.writeBoolean(true);
             dos.flush();
