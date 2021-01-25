@@ -5,6 +5,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * Classe MapasAplicacao
+ */
 public class MapasAplicacao {
 
     private ConcurrentMap<Integer, Localizacao> mapaLocalizacoes;
@@ -12,6 +15,10 @@ public class MapasAplicacao {
     private ReentrantLock lockMapasUtilizadores;
     private ReentrantLock lockMapasLocalizacoes;
 
+    /**
+     * Construtor da classe MapasAplicacao
+     * @param dimensao      Dimensão do mapa a ser criado
+     */
     public MapasAplicacao (int dimensao) {
 
         this.mapaLocalizacoes = new ConcurrentHashMap<>();
@@ -45,23 +52,47 @@ public class MapasAplicacao {
         this.lockMapasLocalizacoes = new ReentrantLock();
     }
 
+
+    /**
+     * Método que retorna o Map das localizações
+     * @return      Map das localizações
+     */
     public Map<Integer, Localizacao> getMapaLocalizacoes() {
         return mapaLocalizacoes;
     }
 
+    /**
+     * Método que retorna o Map dos utilizadores
+     * @return      Map dos utilizadores
+     */
     public Map<String, Utilizador> getMapaUtilizadores() {
         return mapaUtilizadores;
     }
 
+    /**
+     * Método que retorna o Lock associado ao Map dos utilizadores
+     * @return      Lock associado ao Map dos utilizadores
+     */
     public ReentrantLock getLockMapasUtilizadores() {
         return lockMapasUtilizadores;
     }
 
+    /**
+     * Método que retorna o Lock associado ao Map das localizações
+     * @return      Lock associado ao Map das localizações
+     */
     public ReentrantLock getLockMapasLocalizacoes() {
         return lockMapasLocalizacoes;
     }
 
 
+    /**
+     * Método que retorna a instância 'Localizacao' associada a uma dada linha e coluna
+     * @param locX          Linha da localização
+     * @param locY          Coluna da localização
+     * @param dimensao      Dimensão do mapa
+     * @return              Instância 'Localizacao' associada à linha 'locX' e à coluna 'locY'
+     */
     public Localizacao getLocalizacao (int locX, int locY, int dimensao) {
         lockMapasLocalizacoes.lock();
         try {
@@ -71,6 +102,9 @@ public class MapasAplicacao {
         }
     }
 
+    /**
+     * Método que envia um ping o todas as threads que deram await() nas Conditions associadas aos Locks de todas as localizações
+     */
     public void pingTodasLocalizacoes() {
         lockMapasLocalizacoes.lock();
         try {

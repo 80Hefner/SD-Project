@@ -4,6 +4,9 @@ import java.util.*;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * Classe Localização
+ */
 public class Utilizador {
 
     private String username;
@@ -20,6 +23,10 @@ public class Utilizador {
     private Condition condUtilizador;
 
 
+    /**
+     * Construtor por cópia da classe Utilizador
+     * @param utilizador        Utilizador a ser copiado
+     */
     public Utilizador (Utilizador utilizador) {
         this.admin = utilizador.isAdmin();
         this.username = utilizador.getUsername();
@@ -34,6 +41,14 @@ public class Utilizador {
         this.condUtilizador = lockUtilizador.newCondition();
     }
 
+    /**
+     * Construtor da classe Utilizador
+     * @param username          Username do utilizador
+     * @param password          Password do utilizador
+     * @param admin             Boolean que indica se o utilizador é admin do sistema
+     * @param localizacaoX      Linha da localização do utilizador no mapa
+     * @param localizacaoY      Coluna da localização do utilizador no mapa
+     */
     public Utilizador(String username, String password, boolean admin, int localizacaoX, int localizacaoY) {
         this.admin = admin;
         this.username = username;
@@ -49,6 +64,10 @@ public class Utilizador {
     }
 
 
+    /**
+     * Método que retorna o username do utilizador
+     * @return      Username do utilizador
+     */
     public String getUsername() {
         lockUtilizador.lock();
         try {
@@ -58,6 +77,10 @@ public class Utilizador {
         }
     }
 
+    /**
+     * Método que retorna a password do utilizador
+     * @return      Password do utilizador
+     */
     public String getPassword() {
         lockUtilizador.lock();
         try {
@@ -67,6 +90,10 @@ public class Utilizador {
         }
     }
 
+    /**
+     * Método que retorna a linha da localização do utilizador no mapa
+     * @return      Linha da localização do utilizador no mapa
+     */
     public int getLocalizacaoX() {
         lockUtilizador.lock();
         try {
@@ -76,6 +103,10 @@ public class Utilizador {
         }
     }
 
+    /**
+     * Método que retorna a coluna da localização do utilizador no mapa
+     * @return      Coluna da localização do utilizador no mapa
+     */
     public int getLocalizacaoY() {
         lockUtilizador.lock();
         try {
@@ -85,6 +116,10 @@ public class Utilizador {
         }
     }
 
+    /**
+     * Método que retorna um boolean que indica se o utilizador é admin do sistema
+     * @return      Boolean que indica se o utilizador é admin do sistema
+     */
     public boolean isAdmin() {
         lockUtilizador.lock();
         try {
@@ -94,6 +129,10 @@ public class Utilizador {
         }
     }
 
+    /**
+     * Método que retorna um boolean que indica se o utilizador está logado no sistema
+     * @return      Boolean que indica se o utilizador está logado no sistema
+     */
     public boolean isLogado() {
         lockUtilizador.lock();
         try {
@@ -103,6 +142,10 @@ public class Utilizador {
         }
     }
 
+    /**
+     * Método que retorna um boolean que indica se o utilizador está infetado
+     * @return      Boolean que indica se o utilizador está infetado
+     */
     public boolean isInfetado() {
         lockUtilizador.lock();
         try {
@@ -112,6 +155,10 @@ public class Utilizador {
         }
     }
 
+    /**
+     * Método que retorna um boolean que indica se o utilizador precisa de ser avisado de um contacto com alguém infetado
+     * @return      Boolean que indica se o utilizador precisa de ser avisado de um contacto com alguém infetado
+     */
     public boolean isAvisaContactoInfetado() {
         lockUtilizador.lock();
         try {
@@ -121,10 +168,18 @@ public class Utilizador {
         }
     }
 
+    /**
+     * Método que retorna o Lock associado ao utilizador
+     * @return      Lock associado ao utilizador
+     */
     public ReentrantLock getLockUtilizador() {
         return lockUtilizador;
     }
 
+    /**
+     * Método que retorna a Condition do Lock associado ao utilizador
+     * @return      Condition do Lock associado ao utilizador
+     */
     public Condition getCondUtilizador() {
         lockUtilizador.lock();
         try {
@@ -134,6 +189,10 @@ public class Utilizador {
         }
     }
 
+    /**
+     * Método que retorna um Map com os utilizadores com quem o utilizador contactou
+     * @return      Map com os utilizadores com quem o utilizador contactou
+     */
     public Map<String, Utilizador> getUtilizadoresComQuemContactou() {
         lockUtilizador.lock();
         try {
@@ -143,6 +202,9 @@ public class Utilizador {
         }
     }
 
+    /**
+     * Método que coloca a variável 'logado' a true
+     */
     public void login() {
         lockUtilizador.lock();
         try {
@@ -152,6 +214,9 @@ public class Utilizador {
         }
     }
 
+    /**
+     * Método que coloca a variável 'logado' a false
+     */
     public void logout() {
         lockUtilizador.lock();
         try {
@@ -161,6 +226,9 @@ public class Utilizador {
         }
     }
 
+    /**
+     * Método que coloca a variável 'infetado' a true
+     */
     public void setInfetado() {
         lockUtilizador.lock();
         try {
@@ -170,6 +238,9 @@ public class Utilizador {
         }
     }
 
+    /**
+     * Método que coloca a variável 'avisaContactoInfetado' a true
+     */
     public void setAvisaContactoInfetado (boolean avisaContactoInfetado) {
         lockUtilizador.lock();
         try {
@@ -181,6 +252,10 @@ public class Utilizador {
         }
     }
 
+    /**
+     * Método que adiciona um utilizador aos utilizadores com quem o utilizador contactou
+     * @param utilizador        Utilizador a ser adicionado
+     */
     public void adicionaUtilizador (Utilizador utilizador) {
         lockUtilizador.lock();
         try {
@@ -192,6 +267,11 @@ public class Utilizador {
         }
     }
 
+    /**
+     * Método que atualiza a localização do utilizador
+     * @param novoX         Linha da nova localização do utilizador no mapa
+     * @param novoY         Coluna da nova localização do utilizador no mapa
+     */
     public void atualizaLocalizacao(Integer novoX, Integer novoY) {
         lockUtilizador.lock();
         try {
@@ -202,6 +282,9 @@ public class Utilizador {
         }
     }
 
+    /**
+     * Método que avisa os utilizadores com quem o utilizador contactou que este se encontra infetado
+     */
     public void avisaContactos() {
         lockUtilizador.lock();
         try {
@@ -213,6 +296,10 @@ public class Utilizador {
         }
     }
 
+    /**
+     * Método que retorna uma cópia do utilizador
+     * @return      Cópia do utilizador
+     */
     public Utilizador clone () {
         lockUtilizador.lock();
         try {

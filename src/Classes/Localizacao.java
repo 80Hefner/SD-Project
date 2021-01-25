@@ -7,6 +7,9 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
+/**
+ * Classe Localização
+ */
 public class Localizacao {
 
     private int localizacaoX;
@@ -17,17 +20,30 @@ public class Localizacao {
     private ReentrantLock lockLocalizacao = new ReentrantLock();
     private Condition condLocalizacao = lockLocalizacao.newCondition();
 
+    /**
+     * Construtor da classe Localizacao
+     * @param localizacaoX      Linha da localização no mapa
+     * @param localizacaoY      Coluna da localização no mapa
+     */
     public Localizacao(int localizacaoX, int localizacaoY) {
         this.localizacaoX = localizacaoX;
         this.localizacaoY = localizacaoY;
-        this.utilizadoresAtuais = new TreeMap<String,Utilizador>();
-        this.utilizadoresPassados = new TreeMap<String,Utilizador>();
+        this.utilizadoresAtuais = new TreeMap<>();
+        this.utilizadoresPassados = new TreeMap<>();
     }
 
+    /**
+     * Método que retorna o Lock associado à localização
+     * @return      Lock associado à localização
+     */
     public ReentrantLock getLockLocalizacao() {
         return lockLocalizacao;
     }
 
+    /**
+     * Método que retorna a Condition do Lock associado à localização
+     * @return      Condition do Lock associado à localização
+     */
     public Condition getCondLocalizacao() {
         lockLocalizacao.lock();
         try {
@@ -37,6 +53,10 @@ public class Localizacao {
         }
     }
 
+    /**
+     * Método que retorna a linha da localização no mapa
+     * @return      Linha da localização no mapa
+     */
     public int getLocalizacaoX() {
         lockLocalizacao.lock();
         try {
@@ -46,6 +66,10 @@ public class Localizacao {
         }
     }
 
+    /**
+     * Método que retorna a coluna da localização no mapa
+     * @return      Coluna da localização no mapa
+     */
     public int getLocalizacaoY() {
         lockLocalizacao.lock();
         try {
@@ -55,6 +79,11 @@ public class Localizacao {
         }
     }
 
+
+    /**
+     * Método que adiciona um utilizador à localização
+     * @param utilizador        Utilizador que entrou na localização
+     */
     public void adicionaUtilizadorLocalizacao (Utilizador utilizador) {
         String username = utilizador.getUsername();
 
@@ -78,6 +107,10 @@ public class Localizacao {
     }
 
 
+    /**
+     * Método que remove um utilizador da localização, pois este se moveu para outra localização
+     * @param utilizador        Utilizador que saiu da localização
+     */
     public void removeUtilizadorAtual (Utilizador utilizador) {
         lockLocalizacao.lock();
         try {
@@ -92,6 +125,10 @@ public class Localizacao {
     }
 
 
+    /**
+     * Método que retorna o número de utilizadores atualmente na localização
+     * @return      Número de utilizadores atualmente na localização
+     */
     public int consultaNumeroAtualUtilizadores () {
         lockLocalizacao.lock();
         try {
@@ -102,6 +139,10 @@ public class Localizacao {
     }
 
 
+    /**
+     * Método que retorna os utilizadores que já passaram na localização
+     * @return      Utilizadores que já passaram na localização
+     */
     public Set<Utilizador> getUtilizadoresPassados() {
         lockLocalizacao.lock();
         try {
@@ -111,6 +152,10 @@ public class Localizacao {
         }
     }
 
+
+    /**
+     * Método que envia um ping a todas as threads que deram await() na Condition do Lock associado à localização
+     */
     public void enviaPing() {
         lockLocalizacao.lock();
             condLocalizacao.signalAll();
