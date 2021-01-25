@@ -11,7 +11,6 @@ public class Client {
     private ClientListener clientListener;
     private boolean admin;
     private boolean infetado;
-    //todo criar classe ClientListener
 
     public Client() throws IOException {
         this.systemIn = new BufferedReader(new InputStreamReader(System.in));

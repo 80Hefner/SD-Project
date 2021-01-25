@@ -111,6 +111,9 @@ class ServerWorker implements Runnable {
             userAtual = mapasAplicacao.getMapaUtilizadores().get(username);
             userAtual.login();
 
+            Thread threadAvisaContacto = new Thread(new ThreadAvisaContacto(socket2, userAtual));
+            threadAvisaContacto.start();
+
             if (userAtual.isAdmin()) res += 10;
             if (userAtual.isInfetado()) res += 1;
 
@@ -226,6 +229,7 @@ class ServerWorker implements Runnable {
         }
         else {
             userAtual.setInfetado();
+            userAtual.avisaContactos();
             dos.writeBoolean(true);
             dos.flush();
         }

@@ -38,6 +38,13 @@ public class ClientListener implements Runnable{
                                     "A localização X:" + s[0] + " Y:" + s[1] + " encontra-se desocupada." +
                                     "\n--------------------------------\n");
                             break;
+
+                        case "avisaContacto":
+                            System.out.println("\n--------------------------------\n" +
+                                    "ESTEVE EM CONTACTO COM UM INFETADO" +
+                                    "\n--------------------------------\n");
+                            break;
+
                         case "exit":
                             running = false;
                             break;

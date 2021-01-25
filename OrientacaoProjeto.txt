@@ -17,9 +17,11 @@ _________________________________________
 	X Utilizador comunicar ao servidor que está doente. Depois desta informação, Utilizador não pode interagir mais com o Servidor, uma vez que está em isolamento.
 
 - - FUNCIONALIDADES ADICIONAIS
-	. Servidor notificar todos os Utilizador que estiveram em contacto com um doente. Ou seja, que se tenham cruzado (estado numa mesma localização ao mesmo tempo)
+	X Servidor notificar todos os Utilizador que estiveram em contacto com um doente. Ou seja, que se tenham cruzado (estado numa mesma localização ao mesmo tempo)
 	X Um Utilizador com autorização especial pode ver o mapa indicando em cada posição, quantos utilizador e quantos doentes (utilizadores que mais tarde informaram contrair a infeção) visitaram cada posição.
 
+- - FUNCIONALIDADES ADICIONAIS NOSSAS
+    . Atribuir admin a outro Utilizador.
 
 
 - ELEMENTOS NECESSÁRIOS

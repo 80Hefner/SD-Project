@@ -1,7 +1,6 @@
 package Servidor;
 
 import Classes.Localizacao;
-
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -11,7 +10,7 @@ public class ThreadEspacoVazio implements Runnable{
     private Socket socketEscrita;
     private Localizacao loc;
 
-    public ThreadEspacoVazio(Socket socketEscrita, Localizacao loc) {
+    public ThreadEspacoVazio (Socket socketEscrita, Localizacao loc) {
         this.socketEscrita = socketEscrita;
         this.loc = loc;
     }

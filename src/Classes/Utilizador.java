@@ -1,6 +1,7 @@
 package Classes;
 
 import java.util.*;
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Utilizador {
@@ -12,8 +13,11 @@ public class Utilizador {
     private int localizacaoY;
     private boolean logado;
     private boolean infetado;
+    private boolean avisaContactoInfetado;
     private Map<String,Utilizador> utilizadoresComQuemContactou;
+
     private ReentrantLock lockUtilizador;
+    private Condition condUtilizador;
 
 
     public Utilizador (Utilizador utilizador) {
@@ -25,7 +29,9 @@ public class Utilizador {
         this.utilizadoresComQuemContactou = utilizador.getUtilizadoresComQuemContactou();
         this.logado = utilizador.isLogado();
         this.infetado = utilizador.isInfetado();
+        this.avisaContactoInfetado = utilizador.isAvisaContactoInfetado();
         this.lockUtilizador = new ReentrantLock();
+        this.condUtilizador = lockUtilizador.newCondition();
     }
 
     public Utilizador(String username, String password, boolean admin, int localizacaoX, int localizacaoY) {
@@ -37,7 +43,9 @@ public class Utilizador {
         this.utilizadoresComQuemContactou = new TreeMap<String,Utilizador>();
         this.logado = false;
         this.infetado = false;
+        this.avisaContactoInfetado = false;
         this.lockUtilizador = new ReentrantLock();
+        this.condUtilizador = lockUtilizador.newCondition();
     }
 
 
@@ -69,6 +77,18 @@ public class Utilizador {
         return infetado;
     }
 
+    public boolean isAvisaContactoInfetado() {
+        return avisaContactoInfetado;
+    }
+
+    public ReentrantLock getLockUtilizador() {
+        return lockUtilizador;
+    }
+
+    public Condition getCondUtilizador() {
+        return condUtilizador;
+    }
+
     public Map<String, Utilizador> getUtilizadoresComQuemContactou() {
         return utilizadoresComQuemContactou;
     }
@@ -79,6 +99,14 @@ public class Utilizador {
 
     public void setInfetado() {
         this.infetado = true;
+    }
+
+    public void setAvisaContactoInfetado (boolean avisaContactoInfetado) {
+        this.getLockUtilizador().lock();
+        this.avisaContactoInfetado = avisaContactoInfetado;
+        if (avisaContactoInfetado)
+            this.getCondUtilizador().signalAll();
+        this.getLockUtilizador().unlock();
     }
 
     public void adicionaUtilizador (Utilizador utilizador) {
@@ -97,6 +125,17 @@ public class Utilizador {
         try {
             this.localizacaoX = novoX;
             this.localizacaoY = novoY;
+        } finally {
+            lockUtilizador.unlock();
+        }
+    }
+
+    public void avisaContactos() {
+        lockUtilizador.lock();
+        try {
+            for (Utilizador u : utilizadoresComQuemContactou.values()) {
+                u.setAvisaContactoInfetado(true);
+            }
         } finally {
             lockUtilizador.unlock();
         }
