@@ -97,8 +97,7 @@ class ServerWorker implements Runnable {
     }
 
 
-
-
+    
     private void efetuaLogin() throws IOException {
         String username = dis.readUTF();
         String password = dis.readUTF();

@@ -1,20 +1,20 @@
 package Classes;
 
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class MapasAplicacao {
 
-    private Map<Integer, Localizacao> mapaLocalizacoes;
-    private Map<String, Utilizador> mapaUtilizadores;
+    private ConcurrentMap<Integer, Localizacao> mapaLocalizacoes;
+    private ConcurrentMap<String, Utilizador> mapaUtilizadores;
     private ReentrantLock lockMapasUtilizadores;
     private ReentrantLock lockMapasLocalizacoes;
 
     public MapasAplicacao (int dimensao) {
 
-        this.mapaLocalizacoes = new TreeMap<Integer, Localizacao>();
-
+        this.mapaLocalizacoes = new ConcurrentHashMap<>();
         for (int linha = 0; linha<dimensao; linha++) {
             for (int coluna = 0; coluna<dimensao; coluna++) {
                 int indiceMapa = linha*dimensao + coluna;
@@ -23,8 +23,7 @@ public class MapasAplicacao {
             }
         }
 
-
-        this.mapaUtilizadores = new TreeMap<String, Utilizador>();
+        this.mapaUtilizadores = new ConcurrentHashMap<>();
 
         Utilizador admin1 = new Utilizador("admin1","admin1", true, 0, 0);
         mapaUtilizadores.put (admin1.getUsername(), admin1);
@@ -64,11 +63,21 @@ public class MapasAplicacao {
 
 
     public Localizacao getLocalizacao (int locX, int locY, int dimensao) {
-        return mapaLocalizacoes.get(locX*dimensao + locY);
+        lockMapasLocalizacoes.lock();
+        try {
+            return mapaLocalizacoes.get(locX*dimensao + locY);
+        } finally {
+            lockMapasLocalizacoes.unlock();
+        }
     }
 
     public void pingTodasLocalizacoes() {
-        for (Localizacao loc : mapaLocalizacoes.values())
-            loc.enviaPing();
+        lockMapasLocalizacoes.lock();
+        try {
+            for (Localizacao loc : mapaLocalizacoes.values())
+                loc.enviaPing();
+        } finally {
+            lockMapasLocalizacoes.unlock();
+        }
     }
 }
