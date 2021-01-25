@@ -26,17 +26,21 @@ public class MapasAplicacao {
 
         this.mapaUtilizadores = new TreeMap<String, Utilizador>();
 
-        Utilizador user1 = new Utilizador("user1","user1", true, 0, 0);
+        Utilizador admin1 = new Utilizador("admin1","admin1", true, 0, 0);
+        mapaUtilizadores.put (admin1.getUsername(), admin1);
+        mapaLocalizacoes.get(0).adicionaUtilizadorLocalizacao(admin1);
+
+        Utilizador user1 = new Utilizador("user1","user1", false, 2, 2);
         mapaUtilizadores.put (user1.getUsername(), user1);
-        mapaLocalizacoes.get(0).adicionaUtilizadorLocalizacao(user1);
+        mapaLocalizacoes.get(2*dimensao + 2).adicionaUtilizadorLocalizacao(user1);
 
-        Utilizador user2 = new Utilizador("user2","user2", false, 2, 2);
+        Utilizador user2 = new Utilizador("user2","user2", false, 5, 5);
         mapaUtilizadores.put (user2.getUsername(), user2);
-        mapaLocalizacoes.get(2*dimensao + 2).adicionaUtilizadorLocalizacao(user2);
+        mapaLocalizacoes.get(5*dimensao + 5).adicionaUtilizadorLocalizacao(user2);
 
-        Utilizador user3 = new Utilizador("user3","user3", false, 5, 5);
-        mapaUtilizadores.put (user3.getUsername(), user3);
-        mapaLocalizacoes.get(5*dimensao + 5).adicionaUtilizadorLocalizacao(user3);
+        Utilizador admin2 = new Utilizador("admin2","admin2", true, 9, 9);
+        mapaUtilizadores.put (admin2.getUsername(), admin2);
+        mapaLocalizacoes.get(5*dimensao + 5).adicionaUtilizadorLocalizacao(admin2);
 
         this.lockMapasUtilizadores = new ReentrantLock();
         this.lockMapasLocalizacoes = new ReentrantLock();

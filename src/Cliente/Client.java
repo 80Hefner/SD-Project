@@ -161,7 +161,7 @@ public class Client {
                         }
                         break;
 
-                    case 6: // Consulta Mapa de Localizações
+                    case 5: // Consulta Mapa de Localizações
                         if (!admin) {
                             System.out.println("Input incorreto.");
                             break;
@@ -303,7 +303,7 @@ public class Client {
 
         String temPermissao = "";
         if (admin)
-            temPermissao = "\n│ .6 - Consulta Mapa de Localizações               │";
+            temPermissao = "\n│ .5 - Consulta Mapa de Localizações               │";
 
         System.out.print(
                 "\n┌──────────────────────────────────────────────────┐" +

@@ -29,15 +29,30 @@ public class Localizacao {
     }
 
     public Condition getCondLocalizacao() {
-        return condLocalizacao;
+        lockLocalizacao.lock();
+        try {
+            return condLocalizacao;
+        } finally {
+            lockLocalizacao.unlock();
+        }
     }
 
     public int getLocalizacaoX() {
-        return localizacaoX;
+        lockLocalizacao.lock();
+        try {
+            return localizacaoX;
+        } finally {
+            lockLocalizacao.unlock();
+        }
     }
 
     public int getLocalizacaoY() {
-        return localizacaoY;
+        lockLocalizacao.lock();
+        try {
+            return localizacaoY;
+        } finally {
+            lockLocalizacao.unlock();
+        }
     }
 
     public void adicionaUtilizadorLocalizacao (Utilizador utilizador) {
