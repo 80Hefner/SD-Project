@@ -23,7 +23,7 @@ public class ClientStub {
         s.close();
     }
 
-    public boolean login(String user, String password) throws IOException {
+    public int login(String user, String password) throws IOException {
         dos.writeUTF("login");
         dos.flush();
 
@@ -33,7 +33,7 @@ public class ClientStub {
         dos.writeUTF(password);
         dos.flush();
 
-        return dis.readBoolean();
+        return dis.readInt();
     }
 
     public boolean atualizarLocalizacao(int x, int y) throws IOException {
@@ -49,7 +49,7 @@ public class ClientStub {
         return dis.readBoolean();
     }
 
-    public boolean registar(String user, String password) throws IOException {
+    public boolean registar(String user, String password, int locX, int locY) throws IOException {
         dos.writeUTF("registar");
         dos.flush();
 
@@ -57,6 +57,12 @@ public class ClientStub {
         dos.flush();
 
         dos.writeUTF(password);
+        dos.flush();
+
+        dos.writeInt(locX);
+        dos.flush();
+
+        dos.writeInt(locY);
         dos.flush();
 
         return dis.readBoolean();
@@ -69,5 +75,24 @@ public class ClientStub {
         return dis.readBoolean();
     }
 
+    public int consultaNumeroPessoasLocalizacao(int x, int y) throws IOException {
+        dos.writeUTF("consultaNumeroPessoasLocalizacao");
+        dos.flush();
 
+        dos.writeInt(x);
+        dos.flush();
+
+        dos.writeInt(y);
+        dos.flush();
+
+        return dis.readInt();
+    }
+
+
+    public String consultarMapaLocalizacoes() throws IOException {
+        dos.writeUTF("consultarMapaLocalizacoes");
+        dos.flush();
+
+        return dis.readUTF();
+    }
 }

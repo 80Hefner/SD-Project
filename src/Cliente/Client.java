@@ -1,15 +1,23 @@
 package Cliente;
 
+import Servidor.Servidor;
+
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Client {
 
     private final BufferedReader systemIn;
     private ClientStub currentUser;
+    private boolean admin;
+    //todo criar classe ClientListener
 
     public Client() throws IOException {
         this.systemIn = new BufferedReader(new InputStreamReader(System.in));
         this.currentUser = null;
+        this.admin = false;
     }
 
     public static void main(String[] args) {
@@ -40,10 +48,11 @@ public class Client {
 
                     case 1: // Login
                         currentUser = new ClientStub();
-                        boolean respostaLogin = login();
+                        int respostaLogin = login();
 
-                        if (respostaLogin) {
+                        if (respostaLogin != -1) {
                             System.out.println("Login com sucesso.");
+                            if (respostaLogin == 1) admin = true;
                             executaMenuPrincipal();
                         }
                         else {
@@ -97,6 +106,7 @@ public class Client {
                             System.out.println("Logout efetuado com sucesso.");
                             currentUser.endSession();
                             currentUser = null;
+                            admin = false;
                         }
                         else {
                             System.out.println("Logout efetuado sem sucesso.");
@@ -108,7 +118,29 @@ public class Client {
 
                         if (respostaAtualizarLocalizacao) {
                             System.out.println("Localização atualizada com sucesso.");
+                        } else {
+                            System.out.println("Localização não atualizada.");
                         }
+                        break;
+
+                    case 2: // Consulta Numero de Pessoas numa Localização
+                        int numeroPessoasLocalizacao = consultaNumeroPessoasLocalizacao();
+
+                        if (numeroPessoasLocalizacao != -1) {
+                            System.out.println("Localização pedida possui " + numeroPessoasLocalizacao + " Utilizadores no momento!");
+                        } else {
+                            System.out.println("Localização pedida não pode ser verificada.");
+                        }
+                        break;
+
+                    case 6: // Consulta Mapa de Localizações
+                        if (!admin) {
+                            System.out.println("Input incorreto.");
+                            break;
+                        }
+                        String mapaLocalizacoesUtilizadores = consultarMapaLocalizacoes();
+                        //System.out.println("MAPA TESTE " + mapaLocalizacoesUtilizadores);
+                        showMapaLocalizacoes(mapaLocalizacoesUtilizadores);
                         break;
 
                     default:
@@ -123,7 +155,7 @@ public class Client {
     }
 
     // Opções Menu Principal
-    private boolean atualizarLocalizacao() throws IOException {
+    private boolean atualizarLocalizacao() throws IOException, NumberFormatException {
         System.out.println("Nova Localização");
         System.out.print("X: ");
         int x = Integer.parseInt(systemIn.readLine());
@@ -133,8 +165,43 @@ public class Client {
         return (currentUser.atualizarLocalizacao(x, y));
     }
 
+    private int consultaNumeroPessoasLocalizacao() throws IOException, NumberFormatException {
+        System.out.println("Localização a verificar");
+        System.out.print("X: ");
+        int x = Integer.parseInt(systemIn.readLine());
+        System.out.print("Y: ");
+        int y = Integer.parseInt(systemIn.readLine());
+
+        return (currentUser.consultaNumeroPessoasLocalizacao(x, y));
+    }
+
+    private String consultarMapaLocalizacoes() throws IOException {
+        return (currentUser.consultarMapaLocalizacoes());
+    }
+
+    private void showMapaLocalizacoes (String mapa) throws NumberFormatException {
+
+        List<String> informacoesMapa = Arrays.asList(mapa.split(":"));
+        int dimensao = Integer.parseInt(informacoesMapa.get(0));
+
+        for (int linha = 0; linha<dimensao; linha++) {
+
+            for (int coluna = 0; coluna<dimensao; coluna++) {
+
+                List<String> informacoesIndice = Arrays.asList(informacoesMapa.get(linha*dimensao+coluna+1).split("-"));
+                int nrUtilizadores = Integer.parseInt(informacoesIndice.get(0));
+                int nrInfetados = Integer.parseInt(informacoesIndice.get(1));
+
+                System.out.print("  " + nrUtilizadores + "|" + nrInfetados);
+
+            }
+
+            System.out.println();
+        }
+    }
+
     // Opções Menu Login
-    private boolean login() throws IOException {
+    private int login() throws IOException {
         System.out.print("Nome de utilizador: ");
         String user = systemIn.readLine();
 
@@ -144,21 +211,27 @@ public class Client {
         return (currentUser.login(user, password));
     }
 
-    private boolean registar() throws IOException {
+    private boolean registar() throws IOException, NumberFormatException {
         System.out.print("Nome de utilizador: ");
         String user = systemIn.readLine();
 
         System.out.print("Password: ");
         String password = systemIn.readLine();
 
-        return (currentUser.registar(user, password));
+        System.out.println("Localização");
+        System.out.print("X: ");
+        int x = Integer.parseInt(systemIn.readLine());
+        System.out.print("Y: ");
+        int y = Integer.parseInt(systemIn.readLine());
+
+        return (currentUser.registar(user, password, x, y));
     }
 
 
 
     // Show Menus
     private void showMenuLogin() {
-        System.out.println("\n *** Menu Login*** ");
+        System.out.println("\n *** Menu Login *** ");
         System.out.println("1 - Login");
         System.out.println("2 - Registar");
         System.out.println("0 - Sair");
@@ -166,8 +239,11 @@ public class Client {
     }
 
     private void showMenuPrincipal() {
-        System.out.println("\n *** Menu Principal*** ");
+        System.out.println("\n *** Menu Principal *** ");
         System.out.println("1 - Atualizar Localização");
+        System.out.println("2 - Consulta Número de Pessoas numa Localizacao");
+        if (admin)
+            System.out.println("6 - Consulta Mapa de Localizações");
         System.out.println("0 - Logout");
         System.out.print("Opção: ");
     }

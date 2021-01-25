@@ -6,7 +6,10 @@ import Classes.Utilizador;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 
 class ServerWorker implements Runnable {
@@ -49,7 +52,19 @@ class ServerWorker implements Runnable {
                     case "registar":
                         efetuaRegisto();
                         break;
-//todo atualizar localizacao
+
+                    case "atualizarLocalizacao":
+                        atualizaLocalizacao();
+                        break;
+
+                    case "consultaNumeroPessoasLocalizacao":
+                        consultaNumeroPessoasLocalizacao();
+                        break;
+
+                    case "consultarMapaLocalizacoes":
+                        consultarMapaLocalizacoes();
+                        break;
+
                     default:
                         dos.writeUTF("Opção inválida\n\n");
                         dos.flush();
@@ -68,15 +83,26 @@ class ServerWorker implements Runnable {
 
 
 
+
     private void efetuaLogin() throws IOException {
         String username = dis.readUTF();
         String password = dis.readUTF();
 
-        dos.writeBoolean(mapasAplicacao.getMapaUtilizadores().containsKey(username) && mapasAplicacao.getMapaUtilizadores().get(username).getPassword().equals(password));
-        dos.flush();
+        boolean validaLogin = mapasAplicacao.getMapaUtilizadores().containsKey(username) && mapasAplicacao.getMapaUtilizadores().get(username).getPassword().equals(password);
 
-        userAtual = mapasAplicacao.getMapaUtilizadores().get(username);
-        userAtual.login();
+        if (validaLogin) {
+
+            userAtual = mapasAplicacao.getMapaUtilizadores().get(username);
+            userAtual.login();
+
+            if (userAtual.isAdmin()) dos.writeInt(1);
+            else dos.writeInt(0);
+
+        } else {
+            dos.writeInt(-1);
+        }
+
+        dos.flush();
     }
 
     private void efetuaLogout() throws IOException {
@@ -90,21 +116,96 @@ class ServerWorker implements Runnable {
     private void efetuaRegisto() throws IOException {
         String username = dis.readUTF();
         String password = dis.readUTF();
+        int locX = dis.readInt();
+        int locY = dis.readInt();
 
-        if (mapasAplicacao.getMapaUtilizadores().containsKey(username)) {
+        boolean validaEspaco = ( locX < Servidor.dimensao && locX >= 0 && locY < Servidor.dimensao && locY >= 0 );
+
+        //todo meter locks necessários
+        if (mapasAplicacao.getMapaUtilizadores().containsKey(username) || !validaEspaco) {
             dos.writeBoolean(false);
             dos.flush();
         }
         else {
-            mapasAplicacao.getMapaUtilizadores().put(username, new Utilizador(username, password, Servidor.dimensao));
+            mapasAplicacao.getMapaUtilizadores().put(username, new Utilizador(username, password, false, locX, locY));
             userAtual = mapasAplicacao.getMapaUtilizadores().get(username);
             userAtual.login();
 
-            Localizacao localizacao = mapasAplicacao.getLocalizacao(userAtual.getLocalizacaoX(), userAtual.getLocalizacaoY(), Servidor.dimensao);
+            Localizacao localizacao = mapasAplicacao.getLocalizacao(locX, locY, Servidor.dimensao);
             localizacao.adicionaUtilizadorLocalizacao(userAtual);
 
             dos.writeBoolean(true);
             dos.flush();
         }
+    }
+
+    private void atualizaLocalizacao() throws IOException {
+        Integer antigoX = userAtual.getLocalizacaoX();
+        Integer antigoY = userAtual.getLocalizacaoY();
+
+        Integer novoX = dis.readInt();
+        Integer novoY = dis.readInt();
+
+        boolean novaPosicaoValidada = validaNovaLocalizacao (novoX, novoY, userAtual);
+
+        if (novaPosicaoValidada) {
+            userAtual.atualizaLocalizacao(novoX, novoY);
+            this.mapasAplicacao.getLocalizacao(antigoX, antigoY, Servidor.dimensao).removeUtilizadorAtual(userAtual);
+            this.mapasAplicacao.getLocalizacao(novoX, novoY, Servidor.dimensao).adicionaUtilizadorLocalizacao(userAtual);
+        }
+
+        dos.writeBoolean( novaPosicaoValidada );
+        dos.flush();
+    }
+
+
+    private boolean validaNovaLocalizacao (int locX, int locY, Utilizador user) {
+
+        boolean validaEspaco = ( locX < Servidor.dimensao && locX >= 0 && locY < Servidor.dimensao && locY >= 0 );
+        boolean validaNovaLocalizacao = ( userAtual.getLocalizacaoX() != locX || userAtual.getLocalizacaoY() != locY );
+
+        return (validaNovaLocalizacao && validaEspaco);
+    }
+
+
+    private void consultaNumeroPessoasLocalizacao () throws IOException {
+        Integer locX = dis.readInt();
+        Integer locY = dis.readInt();
+
+        int numeroPessoas;
+
+        boolean validaEspaco = ( locX < Servidor.dimensao && locX >= 0 && locY < Servidor.dimensao && locY >= 0 );
+
+        if (!validaEspaco) {
+            numeroPessoas = -1;
+        }
+        else {
+            numeroPessoas = this.mapasAplicacao.getLocalizacao(locX, locY, Servidor.dimensao).consultaNumeroAtualUtilizadores();
+        }
+
+        dos.writeInt(numeroPessoas);
+        dos.flush();
+    }
+
+    private void consultarMapaLocalizacoes() throws IOException {
+        StringBuilder sb = new StringBuilder();
+        sb.append(Servidor.dimensao);
+
+        //todo meter locks necessários
+        for (int linha = 0; linha<Servidor.dimensao; linha++) {
+            for (int coluna = 0; coluna<Servidor.dimensao; coluna++) {
+
+                sb.append(":");
+
+                Set<Utilizador> setUtilizadores= this.mapasAplicacao.getLocalizacao(linha, coluna, Servidor.dimensao).getUtilizadoresPassados();
+                int nrUtilizadores = setUtilizadores.size();
+                int nrInfetados = (int) setUtilizadores.stream().filter(Utilizador::isInfetado).count();
+
+                sb.append(nrUtilizadores).append("-").append(nrInfetados);
+            }
+        }
+
+        dos.writeUTF(sb.toString());
+        dos.flush();
     }
 }

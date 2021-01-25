@@ -1,9 +1,11 @@
 package Classes;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 public class Localizacao {
 
@@ -25,20 +27,54 @@ public class Localizacao {
     public void adicionaUtilizadorLocalizacao (Utilizador utilizador) {
         String username = utilizador.getUsername();
 
-        this.utilizadoresAtuais.put(username, utilizador);
-        if (!this.utilizadoresPassados.containsKey(username)) {
-            this.utilizadoresPassados.put(username, utilizador);
+        lockLocalizacao.lock();
+        try {
+            this.utilizadoresAtuais.put(username, utilizador);
+            if (!this.utilizadoresPassados.containsKey(username)) {
+                this.utilizadoresPassados.put(username, utilizador);
+            }
+
+            for (Utilizador u : this.utilizadoresAtuais.values()) {
+                if ( !u.getUsername().equals(username) ) {
+                    utilizador.adicionaUtilizador(u);
+                    u.adicionaUtilizador(utilizador);
+                }
+            }
+        } finally {
+            lockLocalizacao.unlock();
         }
 
-        for (Utilizador u : this.utilizadoresAtuais.values()) {
-            if ( !u.getUsername().equals(username) ) {
-                utilizador.adicionaUtilizador(u);
-                u.adicionaUtilizador(utilizador);
-            }
+    }
+
+
+    public void removeUtilizadorAtual (Utilizador utilizador) {
+        lockLocalizacao.lock();
+        try {
+            String username = utilizador.getUsername();
+            this.utilizadoresAtuais.remove(username);
+        } finally {
+            lockLocalizacao.unlock();
         }
     }
 
 
+    public int consultaNumeroAtualUtilizadores () {
+        lockLocalizacao.lock();
+        try {
+            return this.utilizadoresAtuais.size();
+        } finally {
+            lockLocalizacao.unlock();
+        }
+    }
 
+
+    public Set<Utilizador> getUtilizadoresPassados() {
+        lockLocalizacao.lock();
+        try {
+            return utilizadoresPassados.values().stream().map(Utilizador::clone).collect(Collectors.toSet());
+        } finally {
+            lockLocalizacao.unlock();
+        }
+    }
 }
 
