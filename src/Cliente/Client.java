@@ -55,8 +55,8 @@ public class Client {
                             System.out.println("Login com sucesso.");
                             if (respostaLogin / 10 == 1) admin = true;
                             if (respostaLogin % 2 == 1) infetado = true;
-                            clientListener.run();
 
+                            clientListener.run();
                             executaMenuPrincipal();
                         }
                         else {
@@ -69,8 +69,8 @@ public class Client {
 
                         if (respostaRegisto) {
                             System.out.println("Registo com sucesso.");
-                            clientListener.run();
 
+                            clientListener.run();
                             executaMenuPrincipal();
                         }
                         else {

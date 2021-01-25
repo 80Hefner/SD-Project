@@ -131,6 +131,8 @@ class ServerWorker implements Runnable {
 
         mapasAplicacao.pingTodasLocalizacoes();
 
+        dos2.writeUTF("exit");
+        dos2.flush();
         dos.writeBoolean(true);
         dos.flush();
     }

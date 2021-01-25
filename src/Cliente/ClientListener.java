@@ -18,13 +18,14 @@ public class ClientListener implements Runnable{
         this.dis = new DataInputStream(new BufferedInputStream(s.getInputStream()));
     }
 
-    public void endSession() throws IOException, InterruptedException {
+    public void endSession() throws IOException {
         s.shutdownInput();
         s.close();
     }
 
     @Override
     public void run() {
+
         thread = new Thread(() -> {
             try {
                 while (running) {
