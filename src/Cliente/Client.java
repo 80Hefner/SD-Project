@@ -1,9 +1,6 @@
 package Cliente;
 
-import Servidor.Servidor;
-
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,12 +8,14 @@ public class Client {
 
     private final BufferedReader systemIn;
     private ClientStub currentUser;
+    private ClientListener clientListener;
     private boolean admin;
     //todo criar classe ClientListener
 
-    public Client() throws IOException {
+    public Client() {
         this.systemIn = new BufferedReader(new InputStreamReader(System.in));
         this.currentUser = null;
+        this.clientListener = null;
         this.admin = false;
     }
 
@@ -53,6 +52,9 @@ public class Client {
                         if (respostaLogin != -1) {
                             System.out.println("Login com sucesso.");
                             if (respostaLogin == 1) admin = true;
+                            clientListener = new Thread(new ClientListener());
+                            clientListener.start();
+
                             executaMenuPrincipal();
                         }
                         else {
@@ -68,6 +70,9 @@ public class Client {
 
                         if (respostaRegisto) {
                             System.out.println("Registo com sucesso.");
+                            clientListener = new Thread(new ClientListener());
+                            clientListener.start();
+
                             executaMenuPrincipal();
                         }
                         else {
@@ -106,6 +111,8 @@ public class Client {
                             System.out.println("Logout efetuado com sucesso.");
                             currentUser.endSession();
                             currentUser = null;
+                            clientListener.interrupt();
+                            clientListener = null;
                             admin = false;
                         }
                         else {
@@ -199,6 +206,8 @@ public class Client {
             System.out.println();
         }
     }
+
+
 
     // Opções Menu Login
     private int login() throws IOException {

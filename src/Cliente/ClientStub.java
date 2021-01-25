@@ -8,7 +8,7 @@ public class ClientStub {
     private final DataOutputStream dos;
     private final DataInputStream dis;
 
-    public ClientStub () throws IOException {
+    public ClientStub() throws IOException {
         this.s = new Socket("localhost", 12345);
         this.dos = new DataOutputStream(new BufferedOutputStream(s.getOutputStream()));
         this.dis = new DataInputStream(new BufferedInputStream(s.getInputStream()));
@@ -87,7 +87,6 @@ public class ClientStub {
 
         return dis.readInt();
     }
-
 
     public String consultarMapaLocalizacoes() throws IOException {
         dos.writeUTF("consultarMapaLocalizacoes");

@@ -6,11 +6,7 @@ import Classes.Utilizador;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.locks.ReentrantLock;
 
 class ServerWorker implements Runnable {
 
@@ -88,7 +84,9 @@ class ServerWorker implements Runnable {
         String username = dis.readUTF();
         String password = dis.readUTF();
 
-        boolean validaLogin = mapasAplicacao.getMapaUtilizadores().containsKey(username) && mapasAplicacao.getMapaUtilizadores().get(username).getPassword().equals(password);
+        boolean validaLogin = mapasAplicacao.getMapaUtilizadores().containsKey(username) &&
+                mapasAplicacao.getMapaUtilizadores().get(username).getPassword().equals(password) &&
+                !mapasAplicacao.getMapaUtilizadores().get(username).isLogado();
 
         if (validaLogin) {
 
@@ -140,11 +138,11 @@ class ServerWorker implements Runnable {
     }
 
     private void atualizaLocalizacao() throws IOException {
-        Integer antigoX = userAtual.getLocalizacaoX();
-        Integer antigoY = userAtual.getLocalizacaoY();
+        int antigoX = userAtual.getLocalizacaoX();
+        int antigoY = userAtual.getLocalizacaoY();
 
-        Integer novoX = dis.readInt();
-        Integer novoY = dis.readInt();
+        int novoX = dis.readInt();
+        int novoY = dis.readInt();
 
         boolean novaPosicaoValidada = validaNovaLocalizacao (novoX, novoY, userAtual);
 
@@ -169,8 +167,8 @@ class ServerWorker implements Runnable {
 
 
     private void consultaNumeroPessoasLocalizacao () throws IOException {
-        Integer locX = dis.readInt();
-        Integer locY = dis.readInt();
+        int locX = dis.readInt();
+        int locY = dis.readInt();
 
         int numeroPessoas;
 
