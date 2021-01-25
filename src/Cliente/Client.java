@@ -4,6 +4,9 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Classe Client
+ */
 public class Client {
 
     private final BufferedReader systemIn;
@@ -12,6 +15,10 @@ public class Client {
     private boolean admin;
     private boolean infetado;
 
+    /**
+     * Construtor de um Client
+     * @throws IOException      Exception IO
+     */
     public Client() throws IOException {
         this.systemIn = new BufferedReader(new InputStreamReader(System.in));
         this.clientStub = new ClientStub();
@@ -20,6 +27,9 @@ public class Client {
         this.infetado = false;
     }
 
+    /**
+     * Main Method de um Client
+     */
     public static void main(String[] args) {
         try {
             new Client().executaMenuLogin();
@@ -32,6 +42,12 @@ public class Client {
 
 
     // Execução Menus
+
+    /**
+     * Executa o menu de Login inicial
+     * @throws IOException              Exception IO
+     * @throws InterruptedException     InterruptedException
+     */
     private void executaMenuLogin() throws IOException, InterruptedException {
         boolean continua = true;
 
@@ -89,6 +105,10 @@ public class Client {
         }
     }
 
+    /**
+     * Executa o menu Principal depois de logado
+     * @throws IOException      Exception IO
+     */
     private void executaMenuPrincipal() throws IOException {
         boolean continua = true;
 
@@ -181,7 +201,17 @@ public class Client {
         }
     }
 
+
+
+
     // Opções Menu Principal
+
+    /**
+     * Opções e estrutura da opção de atualizar a Localização de um Utilizador
+     * @return                          Booleano que indica se conseguir mudar localização
+     * @throws IOException              Exception IO
+     * @throws NumberFormatException    Formato da String que é invertida para tipo Numérico não é correto
+     */
     private boolean atualizarLocalizacao() throws IOException, NumberFormatException {
         System.out.println("Nova Localização:");
         System.out.print("X > ");
@@ -192,6 +222,12 @@ public class Client {
         return (clientStub.atualizarLocalizacao(x, y));
     }
 
+    /**
+     * Opções e estrutura da opção de consultar uma dada Localização do Mapa
+     * @return                          Numero de pessoas numa Localização, ou se essa Localização não foi possível verificar
+     * @throws IOException              Exception IO
+     * @throws NumberFormatException    Formato da String que é invertida para tipo Numérico não é correto
+     */
     private int consultaNumeroPessoasLocalizacao() throws IOException, NumberFormatException {
         System.out.println("Localização a verificar:");
         System.out.print("X > ");
@@ -202,10 +238,20 @@ public class Client {
         return (clientStub.consultaNumeroPessoasLocalizacao(x, y));
     }
 
+    /**
+     * Estrutura da opção de consultar o Mapa (por parte de um Admin)
+     * @return                      String com os dados do Mapa encriptados
+     * @throws IOException          Exception IO
+     */
     private String consultarMapaLocalizacoes() throws IOException {
         return (clientStub.consultarMapaLocalizacoes());
     }
 
+    /**
+     * Função que pega nos dados incriptados de uma String com dados do Mapa e imprime a informação que esta tem
+     * @param mapa                      String encriptada com as informações do Mapa
+     * @throws NumberFormatException    Formato da String que é invertida para tipo Numérico não é correto
+     */
     private void showMapaLocalizacoes (String mapa) throws NumberFormatException {
 
         List<String> informacoesMapa = Arrays.asList(mapa.split(":"));
@@ -242,6 +288,12 @@ public class Client {
         System.out.println(menu);
     }
 
+    /**
+     * Opções e estrutura da opção de consultar quando uma Localização fica Livre
+     * @return                          Booleano que indica se foi possível verificar posição em estudo
+     * @throws IOException              Exception IO
+     * @throws NumberFormatException    Formato da String que é invertida para tipo Numérico não é correto
+     */
     private boolean consultaLocalizacaoLivre () throws IOException, NumberFormatException {
         System.out.println("Localização a verificar se está livre");
         System.out.print("X > ");
@@ -252,13 +304,25 @@ public class Client {
         return (clientStub.consultaLocalizacaoLivre(x, y));
     }
 
+    /**
+     * Estrutura da opção de avisar que está Infetado
+     * @return                          Booleano que indica se infeção foi bem notificada ao servidor
+     * @throws IOException              Exception IO
+     */
     public boolean notificarInfecao() throws IOException {
         return (clientStub.notificarInfecao());
     }
 
 
 
+
     // Opções Menu Login
+
+    /**
+     * Opções e estrutura da opção de logar num dado utilizador
+     * @return                  Tipo de utilizador ao qual ligamos (ou se não conseguimos logar)
+     * @throws IOException      Exception IO
+     */
     private int login() throws IOException {
         System.out.print("Nome de utilizador: ");
         String user = systemIn.readLine();
@@ -269,6 +333,12 @@ public class Client {
         return (clientStub.login(user, password));
     }
 
+    /**
+     * Opções e estrutura da opção de registar um dado utilizador
+     * @return                          Indica se foi possível registar Utilizador ou não
+     * @throws IOException              Exception IO
+     * @throws NumberFormatException    Formato da String que é invertida para tipo Numérico não é correto
+     */
     private boolean registar() throws IOException, NumberFormatException {
         System.out.print("Nome de utilizador: ");
         String user = systemIn.readLine();
@@ -287,7 +357,12 @@ public class Client {
 
 
 
+
     // Show Menus
+
+    /**
+     * Função que imprime o menu de Login
+     */
     private void showMenuLogin() {
         System.out.print(  "\n┌────────────────────────────┐" +
                            "\n│     *** Menu Login ***     │" +
@@ -299,6 +374,9 @@ public class Client {
                            "\nOpção > ");
     }
 
+    /**
+     * Função que imprime o menu Principal
+     */
     private void showMenuPrincipal() {
 
         String temPermissao = "";
@@ -319,5 +397,4 @@ public class Client {
                 "\nOpção > ");
     }
 
-    // ─ │ ┌ ┐ └ ┘ ├ ┤
 }

@@ -13,6 +13,9 @@ public class Servidor {
 
     static final int dimensao = 10;
 
+    /**
+     * Main Method de um Servidor
+     */
     public static void main(String[] args) {
 
         try {
