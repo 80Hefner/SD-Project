@@ -232,7 +232,7 @@ public class Utilizador {
     public void setInfetado() {
         lockUtilizador.lock();
         try {
-            this.infetado = false;
+            this.infetado = true;
         } finally {
             lockUtilizador.unlock();
         }
