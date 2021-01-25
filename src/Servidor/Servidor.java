@@ -6,7 +6,9 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-
+/**
+ * Classe Servidor
+ */
 public class Servidor {
 
     static final int dimensao = 10;

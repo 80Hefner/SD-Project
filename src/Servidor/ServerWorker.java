@@ -10,6 +10,9 @@ import java.io.*;
 import java.net.Socket;
 import java.util.Set;
 
+/**
+ * Classe responsável pela Thread que coordena o Servidor
+ */
 class ServerWorker implements Runnable {
 
     private final Socket socket;
@@ -20,6 +23,13 @@ class ServerWorker implements Runnable {
     private MapasAplicacao mapasAplicacao;
     private Utilizador userAtual = null;
 
+    /**
+     * Construtor de ServerWorker
+     * @param socket            Socket utilizado para comunicação
+     * @param socket2           Socket utilizado para enviar avisos para o Client
+     * @param mapasAplicacao    Classe onde constam os dados
+     * @throws IOException      Exception IO
+     */
     public ServerWorker (Socket socket, Socket socket2, MapasAplicacao mapasAplicacao) throws IOException {
         this.socket = socket;
         this.socket2 = socket2;
@@ -31,6 +41,9 @@ class ServerWorker implements Runnable {
     }
 
     @Override
+    /**
+     * Método run
+     */
     public void run() {
         try {
             String line;
@@ -95,8 +108,10 @@ class ServerWorker implements Runnable {
             e.printStackTrace();
         }
     }
-
-
+    /**
+     * Método que efetua o Login de um Utilizador
+     * @throws IOException      Exception IO
+     */
     
     private void efetuaLogin() throws IOException {
         String username = dis.readUTF();
@@ -126,6 +141,10 @@ class ServerWorker implements Runnable {
         dos.flush();
     }
 
+    /**
+     * Método que efetua o Logout de um Utilizador
+     * @throws IOException      Exception IO
+     */
     private void efetuaLogout() throws IOException {
         userAtual.logout();
         userAtual = null;
@@ -138,6 +157,10 @@ class ServerWorker implements Runnable {
         dos.flush();
     }
 
+    /**
+     * Método que efetua o registo de um Utilizador no Sistema
+     * @throws IOException      Exception IO
+     */
     private void efetuaRegisto() throws IOException {
         String username = dis.readUTF();
         String password = dis.readUTF();
@@ -146,7 +169,6 @@ class ServerWorker implements Runnable {
 
         boolean validaEspaco = ( locX < Servidor.dimensao && locX >= 0 && locY < Servidor.dimensao && locY >= 0 );
 
-        //todo meter locks necessários
         if (mapasAplicacao.getMapaUtilizadores().containsKey(username) || !validaEspaco) {
             dos.writeBoolean(false);
             dos.flush();
@@ -164,6 +186,10 @@ class ServerWorker implements Runnable {
         }
     }
 
+    /**
+     * Método que atualiza Localização de um Utilizador
+     * @throws IOException      Exception IO
+     */
     private void atualizaLocalizacao() throws IOException {
         int antigoX = userAtual.getLocalizacaoX();
         int antigoY = userAtual.getLocalizacaoY();
@@ -183,14 +209,25 @@ class ServerWorker implements Runnable {
         dos.flush();
     }
 
+    /**
+     * Método que valida nova Localização de um Utilizador
+     * @param locX      nova Localização X de um Utilizador
+     * @param locY      nova Localização Y de um Utilizador
+     * @param user      Utilizador em estudo
+     * @return      booleano que mostra se posição nova é valida
+     */
     private boolean validaNovaLocalizacao (int locX, int locY, Utilizador user) {
 
         boolean validaEspaco = ( locX < Servidor.dimensao && locX >= 0 && locY < Servidor.dimensao && locY >= 0 );
-        boolean validaNovaLocalizacao = ( userAtual.getLocalizacaoX() != locX || userAtual.getLocalizacaoY() != locY );
+        boolean validaNovaLocalizacao = ( user.getLocalizacaoX() != locX || user.getLocalizacaoY() != locY );
 
         return (validaNovaLocalizacao && validaEspaco);
     }
 
+    /**
+     * Método que verifica quantos Utilizadores tem numa Localização
+     * @throws IOException      Exception IO
+     */
     private void consultaNumeroPessoasLocalizacao () throws IOException {
         int locX = dis.readInt();
         int locY = dis.readInt();
@@ -210,6 +247,10 @@ class ServerWorker implements Runnable {
         dos.flush();
     }
 
+    /**
+     * Método que verifica quando uma Localização fica livre
+     * @throws IOException      Exception IO
+     */
     private void consultaLocalizacaoLivre() throws IOException {
         int locX = dis.readInt();
         int locY = dis.readInt();
@@ -226,6 +267,10 @@ class ServerWorker implements Runnable {
         dos.flush();
     }
 
+    /**
+     * Método utilizado quando um Utilizador notifica que está infetado
+     * @throws IOException      Exception IO
+     */
     private void notificarInfecao() throws IOException {
 
         if (userAtual.isInfetado()) {
@@ -240,11 +285,14 @@ class ServerWorker implements Runnable {
         }
     }
 
+    /**
+     * Método utilizado para consultar um Mapa de Localizações e seus utilizadores e infetados
+     * @throws IOException      Exception IO
+     */
     private void consultarMapaLocalizacoes() throws IOException {
         StringBuilder sb = new StringBuilder();
         sb.append(Servidor.dimensao);
 
-        //todo meter locks necessários
         for (int linha = 0; linha<Servidor.dimensao; linha++) {
             for (int coluna = 0; coluna<Servidor.dimensao; coluna++) {
 
