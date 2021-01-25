@@ -1,4 +1,4 @@
-package Servidor;
+package Servidor.Threads;
 
 import Classes.Localizacao;
 import Classes.Utilizador;
@@ -6,7 +6,6 @@ import Classes.Utilizador;
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.lang.reflect.UndeclaredThrowableException;
 import java.net.Socket;
 
 public class ThreadEspacoVazio implements Runnable{

@@ -1,6 +1,5 @@
-package Servidor;
+package Servidor.Threads;
 
-import Classes.Localizacao;
 import Classes.Utilizador;
 
 import java.io.BufferedOutputStream;

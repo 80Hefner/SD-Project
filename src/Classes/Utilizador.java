@@ -50,35 +50,75 @@ public class Utilizador {
 
 
     public String getUsername() {
-        return username;
+        lockUtilizador.lock();
+        try {
+            return username;
+        } finally {
+            lockUtilizador.unlock();
+        }
     }
 
     public String getPassword() {
-        return password;
+        lockUtilizador.lock();
+        try {
+            return password;
+        } finally {
+            lockUtilizador.unlock();
+        }
     }
 
     public int getLocalizacaoX() {
-        return localizacaoX;
+        lockUtilizador.lock();
+        try {
+            return localizacaoX;
+        } finally {
+            lockUtilizador.unlock();
+        }
     }
 
     public int getLocalizacaoY() {
-        return localizacaoY;
+        lockUtilizador.lock();
+        try {
+            return localizacaoY;
+        } finally {
+            lockUtilizador.unlock();
+        }
     }
 
     public boolean isAdmin() {
-        return admin;
+        lockUtilizador.lock();
+        try {
+            return admin;
+        } finally {
+            lockUtilizador.unlock();
+        }
     }
 
     public boolean isLogado() {
-        return logado;
+        lockUtilizador.lock();
+        try {
+            return logado;
+        } finally {
+            lockUtilizador.unlock();
+        }
     }
 
     public boolean isInfetado() {
-        return infetado;
+        lockUtilizador.lock();
+        try {
+            return infetado;
+        } finally {
+            lockUtilizador.unlock();
+        }
     }
 
     public boolean isAvisaContactoInfetado() {
-        return avisaContactoInfetado;
+        lockUtilizador.lock();
+        try {
+            return avisaContactoInfetado;
+        } finally {
+            lockUtilizador.unlock();
+        }
     }
 
     public ReentrantLock getLockUtilizador() {
@@ -86,27 +126,59 @@ public class Utilizador {
     }
 
     public Condition getCondUtilizador() {
-        return condUtilizador;
+        lockUtilizador.lock();
+        try {
+            return condUtilizador;
+        } finally {
+            lockUtilizador.unlock();
+        }
     }
 
     public Map<String, Utilizador> getUtilizadoresComQuemContactou() {
-        return utilizadoresComQuemContactou;
+        lockUtilizador.lock();
+        try {
+            return utilizadoresComQuemContactou;
+        } finally {
+            lockUtilizador.unlock();
+        }
     }
 
-    public void login() {this.logado = true;}
+    public void login() {
+        lockUtilizador.lock();
+        try {
+            this.logado = true;
+        } finally {
+            lockUtilizador.unlock();
+        }
+    }
 
-    public void logout() {this.logado = false;}
+    public void logout() {
+        lockUtilizador.lock();
+        try {
+            this.logado = false;
+        } finally {
+            lockUtilizador.unlock();
+        }
+    }
 
     public void setInfetado() {
-        this.infetado = true;
+        lockUtilizador.lock();
+        try {
+            this.infetado = false;
+        } finally {
+            lockUtilizador.unlock();
+        }
     }
 
     public void setAvisaContactoInfetado (boolean avisaContactoInfetado) {
-        this.getLockUtilizador().lock();
-        this.avisaContactoInfetado = avisaContactoInfetado;
-        if (avisaContactoInfetado)
-            this.getCondUtilizador().signalAll();
-        this.getLockUtilizador().unlock();
+        lockUtilizador.lock();
+        try {
+            this.avisaContactoInfetado = avisaContactoInfetado;
+            if (avisaContactoInfetado)
+                this.getCondUtilizador().signalAll();
+        } finally {
+            lockUtilizador.unlock();
+        }
     }
 
     public void adicionaUtilizador (Utilizador utilizador) {
@@ -142,6 +214,11 @@ public class Utilizador {
     }
 
     public Utilizador clone () {
-        return new Utilizador(this);
+        lockUtilizador.lock();
+        try {
+            return new Utilizador(this);
+        } finally {
+            lockUtilizador.unlock();
+        }
     }
 }

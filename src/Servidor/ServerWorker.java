@@ -3,6 +3,8 @@ package Servidor;
 import Classes.Localizacao;
 import Classes.MapasAplicacao;
 import Classes.Utilizador;
+import Servidor.Threads.ThreadAvisaContacto;
+import Servidor.Threads.ThreadEspacoVazio;
 
 import java.io.*;
 import java.net.Socket;
