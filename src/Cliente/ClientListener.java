@@ -34,15 +34,17 @@ public class ClientListener implements Runnable{
                         case "localizacao":
                             line = dis.readUTF();
                             String[] s = line.split("-");
-                            System.out.println("\n--------------------------------\n" +
-                                    "A localização X:" + s[0] + " Y:" + s[1] + " encontra-se desocupada." +
-                                    "\n--------------------------------\n");
+                            System.out.println(
+                                    "\n╔═════════════════════════════════════════════════════╗" +
+                                    "\n║  Warning: A localização X:" + s[0] + " Y:" + s[1] + " encontra-se livre.  ║" +
+                                    "\n╚═════════════════════════════════════════════════════╝");
                             break;
 
                         case "avisaContacto":
-                            System.out.println("\n--------------------------------\n" +
-                                    "ESTEVE EM CONTACTO COM UM INFETADO" +
-                                    "\n--------------------------------\n");
+                            System.out.println(
+                                    "\n╔══════════════════════════════════════════════════════════╗" +
+                                    "\n║      WARNING: ESTEVE EM CONTACTO COM UM INFETADO!!!      ║" +
+                                    "\n╚══════════════════════════════════════════════════════════╝");
                             break;
 
                         case "exit":

@@ -25,7 +25,7 @@ public class Client {
             new Client().executaMenuLogin();
         }
         catch (Exception e) {
-            System.out.println("Programa terminou com erro\n" + e.getMessage());
+            System.out.println("\nPrograma terminou com erro\n" + e.getMessage());
         }
     }
 
@@ -100,7 +100,10 @@ public class Client {
 
                 switch (opcao) {
                     case -1:
-                        System.out.println("Não pode comunicar com o servidor pois está infetado");
+                        System.out.println(
+                                "\n╔═════════════════════════════════════════════════════════╗" +
+                                "\n║  Não pode comunicar com o servidor pois está infetado!  ║" +
+                                "\n╚═════════════════════════════════════════════════════════╝");
                         break;
 
                     case 0: // Logout
@@ -131,7 +134,7 @@ public class Client {
                         int numeroPessoasLocalizacao = consultaNumeroPessoasLocalizacao();
 
                         if (numeroPessoasLocalizacao != -1) {
-                            System.out.println("Localização pedida possui " + numeroPessoasLocalizacao + " Utilizadores no momento!");
+                            System.out.println("-> Localização pedida possui " + numeroPessoasLocalizacao + " Utilizador(es) no momento!");
                         } else {
                             System.out.println("Localização pedida não pode ser verificada.");
                         }
@@ -147,8 +150,11 @@ public class Client {
                     case 4: // Notificar infeção
                         boolean notificouInfecao = notificarInfecao();
                         if (notificouInfecao) {
-                            infetado = true;
-                            System.out.println("ESTÁ INFETADO!!! Não poderá usar mais o sistema!!!!");
+                            infetado = true; // ═ ║ ╔ ╗ ╚ ╝ ╠ ╣
+                            System.out.println(
+                                    "\n╔═══════════════════════════════════════════════════════╗" +
+                                    "\n║  ESTÁ INFETADO!!! Não poderá usar mais o sistema!!!!  ║" +
+                                    "\n╚═══════════════════════════════════════════════════════╝");
                         }
                         else {
                             System.out.println("Infeção não foi notificada corretamente.");
@@ -161,7 +167,6 @@ public class Client {
                             break;
                         }
                         String mapaLocalizacoesUtilizadores = consultarMapaLocalizacoes();
-                        //System.out.println("MAPA TESTE " + mapaLocalizacoesUtilizadores);
                         showMapaLocalizacoes(mapaLocalizacoesUtilizadores);
                         break;
 
@@ -178,20 +183,20 @@ public class Client {
 
     // Opções Menu Principal
     private boolean atualizarLocalizacao() throws IOException, NumberFormatException {
-        System.out.println("Nova Localização");
-        System.out.print("X: ");
+        System.out.println("Nova Localização:");
+        System.out.print("X > ");
         int x = Integer.parseInt(systemIn.readLine());
-        System.out.print("Y: ");
+        System.out.print("Y > ");
         int y = Integer.parseInt(systemIn.readLine());
 
         return (clientStub.atualizarLocalizacao(x, y));
     }
 
     private int consultaNumeroPessoasLocalizacao() throws IOException, NumberFormatException {
-        System.out.println("Localização a verificar");
-        System.out.print("X: ");
+        System.out.println("Localização a verificar:");
+        System.out.print("X > ");
         int x = Integer.parseInt(systemIn.readLine());
-        System.out.print("Y: ");
+        System.out.print("Y > ");
         int y = Integer.parseInt(systemIn.readLine());
 
         return (clientStub.consultaNumeroPessoasLocalizacao(x, y));
@@ -206,7 +211,19 @@ public class Client {
         List<String> informacoesMapa = Arrays.asList(mapa.split(":"));
         int dimensao = Integer.parseInt(informacoesMapa.get(0));
 
+        int largura = dimensao*3 + (dimensao)*2 + 5;
+
+        String menu = "";
+
+        menu += "\n┌"; for (int i = 0; i<largura-1; i++) { menu += "─"; } menu += "┐\n";
+        menu += "│ Numero Utilizadores | Numero Infetados"; for (int i = 39; i<largura-1; i++) {  menu += " ";} menu += "│\n" ;
+        menu += "├"; for (int i = 0; i<largura-1; i++) { menu += "─"; } menu += "┤\n";
+        menu += "│   │"; for (int i = 0; i<dimensao; i++) { menu += "  " + i + "  "; } menu +="│\n";
+        menu += "│───┼"; for (int i = 4; i<largura-1; i++) { menu += "─"; } menu += "│\n";
+
         for (int linha = 0; linha<dimensao; linha++) {
+
+            menu += "│ " + linha + " │";
 
             for (int coluna = 0; coluna<dimensao; coluna++) {
 
@@ -214,19 +231,22 @@ public class Client {
                 int nrUtilizadores = Integer.parseInt(informacoesIndice.get(0));
                 int nrInfetados = Integer.parseInt(informacoesIndice.get(1));
 
-                System.out.print("  " + nrUtilizadores + "|" + nrInfetados);
+                menu += " " + nrUtilizadores + "|" + nrInfetados + " ";
 
             }
-
-            System.out.println();
+            menu += "│\n";
         }
+
+        menu += "└"; for (int i = 0; i<largura-1; i++) { menu += "─"; } menu += "┘\n";
+
+        System.out.println(menu);
     }
 
     private boolean consultaLocalizacaoLivre () throws IOException, NumberFormatException {
         System.out.println("Localização a verificar se está livre");
-        System.out.print("X: ");
+        System.out.print("X > ");
         int x = Integer.parseInt(systemIn.readLine());
-        System.out.print("Y: ");
+        System.out.print("Y > ");
         int y = Integer.parseInt(systemIn.readLine());
 
         return (clientStub.consultaLocalizacaoLivre(x, y));
@@ -257,9 +277,9 @@ public class Client {
         String password = systemIn.readLine();
 
         System.out.println("Localização");
-        System.out.print("X: ");
+        System.out.print("X > ");
         int x = Integer.parseInt(systemIn.readLine());
-        System.out.print("Y: ");
+        System.out.print("Y > ");
         int y = Integer.parseInt(systemIn.readLine());
 
         return (clientStub.registar(user, password, x, y));
@@ -269,23 +289,35 @@ public class Client {
 
     // Show Menus
     private void showMenuLogin() {
-        System.out.println("\n *** Menu Login *** ");
-        System.out.println("1 - Login");
-        System.out.println("2 - Registar");
-        System.out.println("0 - Sair");
-        System.out.print("Opção: ");
+        System.out.print(  "\n┌────────────────────────────┐" +
+                           "\n│     *** Menu Login ***     │" +
+                           "\n├────────────────────────────┤" +
+                           "\n│ .1 - Login                 │" +
+                           "\n│ .2 - Registar              │" +
+                           "\n│ .0 - Sair                  │" +
+                           "\n└────────────────────────────┘" +
+                           "\nOpção > ");
     }
 
     private void showMenuPrincipal() {
-        System.out.println("\n *** Menu Principal *** ");
-        System.out.println("1 - Atualizar Localização");
-        System.out.println("2 - Consulta Número de Pessoas numa Localizacao");
-        System.out.println("3 - Consulta quando uma Localização fica livre");
-        System.out.println("4 - Notificar infeção");
+
+        String temPermissao = "";
         if (admin)
-            System.out.println("6 - Consulta Mapa de Localizações");
-        System.out.println("0 - Logout");
-        System.out.print("Opção: ");
+            temPermissao = "\n│ .6 - Consulta Mapa de Localizações               │";
+
+        System.out.print(
+                "\n┌──────────────────────────────────────────────────┐" +
+                "\n│              *** Menu Principal ***              │" +
+                "\n├──────────────────────────────────────────────────┤" +
+                "\n│ .1 - Atualizar Localização                       │" +
+                "\n│ .2 - Consulta Número de Pessoas numa Localizacao │" +
+                "\n│ .3 - Consulta quando uma Localização fica livre  │" +
+                "\n│ .4 - Notificar infeção                           │" +
+                temPermissao +
+                "\n│ .0 - Logout                                      │" +
+                "\n└──────────────────────────────────────────────────┘" +
+                "\nOpção > ");
     }
 
+    // ─ │ ┌ ┐ └ ┘ ├ ┤
 }
