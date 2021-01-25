@@ -63,4 +63,8 @@ public class MapasAplicacao {
         return mapaLocalizacoes.get(locX*dimensao + locY);
     }
 
+    public void pingTodasLocalizacoes() {
+        for (Localizacao loc : mapaLocalizacoes.values())
+            loc.enviaPing();
+    }
 }

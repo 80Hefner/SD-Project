@@ -129,6 +129,8 @@ class ServerWorker implements Runnable {
         userAtual.logout();
         userAtual = null;
 
+        mapasAplicacao.pingTodasLocalizacoes();
+
         dos.writeBoolean(true);
         dos.flush();
     }
@@ -213,7 +215,7 @@ class ServerWorker implements Runnable {
 
         if (validaEspaco) {
             Localizacao loc = this.mapasAplicacao.getLocalizacao(locX, locY, Servidor.dimensao);
-            Thread verificaEspacoVazio = new Thread(new ThreadEspacoVazio(socket2, loc));
+            Thread verificaEspacoVazio = new Thread(new ThreadEspacoVazio(socket2, loc, userAtual));
             verificaEspacoVazio.start();
         }
 

@@ -1,18 +1,23 @@
 package Servidor;
 
 import Classes.Localizacao;
+import Classes.Utilizador;
+
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.net.Socket;
 
 public class ThreadEspacoVazio implements Runnable{
     private Socket socketEscrita;
     private Localizacao loc;
+    private Utilizador utilizador;
 
-    public ThreadEspacoVazio (Socket socketEscrita, Localizacao loc) {
+    public ThreadEspacoVazio (Socket socketEscrita, Localizacao loc, Utilizador utilizador) {
         this.socketEscrita = socketEscrita;
         this.loc = loc;
+        this.utilizador = utilizador;
     }
 
     @Override
@@ -22,16 +27,18 @@ public class ThreadEspacoVazio implements Runnable{
 
             loc.getLockLocalizacao().lock();
 
-            while (loc.consultaNumeroAtualUtilizadores() != 0) {
+            while (loc.consultaNumeroAtualUtilizadores() != 0 && utilizador.isLogado()) {
                 loc.getCondLocalizacao().await();
             }
 
             loc.getLockLocalizacao().unlock();
 
-            out.writeUTF("localizacao");
-            out.flush();
-            out.writeUTF(loc.getLocalizacaoX()+"-"+ loc.getLocalizacaoY());
-            out.flush();
+            if (utilizador.isLogado()) {
+                out.writeUTF("localizacao");
+                out.flush();
+                out.writeUTF(loc.getLocalizacaoX()+"-"+ loc.getLocalizacaoY());
+                out.flush();
+            }
 
         } catch (IOException | InterruptedException e){
             e.printStackTrace();

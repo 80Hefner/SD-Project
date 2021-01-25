@@ -95,5 +95,11 @@ public class Localizacao {
             lockLocalizacao.unlock();
         }
     }
+
+    public void enviaPing() {
+        lockLocalizacao.lock();
+            condLocalizacao.signalAll();
+        lockLocalizacao.unlock();
+    }
 }
 
