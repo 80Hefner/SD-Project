@@ -5,39 +5,51 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-public class ClientListener{
+public class ClientListener implements Runnable{
+    private Thread thread;
+    private boolean running;
     private final Socket s;
     private final DataInputStream dis;
 
     public ClientListener() throws IOException {
-        this.s = new Socket("localhost", 12346);
+        this.running = true;
+        this.s = new Socket("localhost", 54321);
+        this.s.shutdownOutput();
         this.dis = new DataInputStream(new BufferedInputStream(s.getInputStream()));
     }
 
-
-    public void run() {
-
-
-        try {
-            while (true) {
-                String line = dis.readUTF();
-
-                switch (line) {
-                    case "localizacao":
-                        line = dis.readUTF();
-                        String[] s = line.split("-");
-                        System.out.println("A localização X: " + s[0] + " Y: " + s[1] + " encontra-se desocupada.");
-                }
-            }
-
-
-        } catch (IOException | NumberFormatException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void stop() throws IOException {
+    public void endSession() throws IOException, InterruptedException {
         s.shutdownInput();
         s.close();
     }
+
+    @Override
+    public void run() {
+        thread = new Thread(() -> {
+            try {
+                while (running) {
+                    String line = dis.readUTF();
+
+                    switch (line) {
+                        case "localizacao":
+                            line = dis.readUTF();
+                            String[] s = line.split("-");
+                            System.out.println("\n--------------------------------\n" +
+                                    "A localização X:" + s[0] + " Y:" + s[1] + " encontra-se desocupada." +
+                                    "\n--------------------------------\n");
+                            break;
+                        case "exit":
+                            running = false;
+                            break;
+                    }
+                }
+
+            } catch (IOException | NumberFormatException e) {
+                e.printStackTrace();
+            }
+        });
+
+        thread.start();
+    }
+
 }

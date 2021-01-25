@@ -88,6 +88,26 @@ public class ClientStub {
         return dis.readInt();
     }
 
+    public boolean consultaLocalizacaoLivre(int x, int y) throws IOException {
+        dos.writeUTF("consultaLocalizacaoLivre");
+        dos.flush();
+
+        dos.writeInt(x);
+        dos.flush();
+
+        dos.writeInt(y);
+        dos.flush();
+
+        return dis.readBoolean();
+    }
+
+    public boolean notificarInfecao() throws IOException {
+        dos.writeUTF("notificarInfecao");
+        dos.flush();
+
+        return dis.readBoolean();
+    }
+
     public String consultarMapaLocalizacoes() throws IOException {
         dos.writeUTF("consultarMapaLocalizacoes");
         dos.flush();

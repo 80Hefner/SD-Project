@@ -13,8 +13,8 @@ _________________________________________
 	X Login e registar um utilizador. Sempre que um utilizador deseja interagir com o serviço, estabelecer conexão e ser autenticado pelo servidor.
 	X Manter o serviço atualizado com a localização atual do Utilizador.
 	X Utilizador saber dado número de pessoas numa dada localização.
-	. Utilizador saber quando não há ninguém numa dada localização.
-	. Utilizador comunicar ao servidor que está doente. Depois desta informação, Utilizador não pode interagir mais com o Servidor, uma vez que está em isolamento. 
+	X Utilizador saber quando não há ninguém numa dada localização.
+	X Utilizador comunicar ao servidor que está doente. Depois desta informação, Utilizador não pode interagir mais com o Servidor, uma vez que está em isolamento.
 
 - - FUNCIONALIDADES ADICIONAIS
 	. Servidor notificar todos os Utilizador que estiveram em contacto com um doente. Ou seja, que se tenham cruzado (estado numa mesma localização ao mesmo tempo)
@@ -25,7 +25,7 @@ _________________________________________
 - ELEMENTOS NECESSÁRIOS
 
 - - CLIENTE
-	. Clietne deve oferecer uma interface com o Utilizador que permita suportar as funcionalidades acima descritas. Usar em JAVA threads e sockets TCP.
+	. Cliente deve oferecer uma interface com o Utilizador que permita suportar as funcionalidades acima descritas. Usar em JAVA threads e sockets TCP.
 
 - - SERVIDOR
 	. Usar em JAVA threads e sockets TCP. Manter em memória a informação relevante para suportar as funcionalidades descritass acima. Formato binário através apenas Data[Input|Output]Stream. Threads do servidor não devem escrever em mais do que um scoket, devendo as escritas serem feitas por threads associadas a esse socket.

@@ -77,6 +77,9 @@ public class Utilizador {
 
     public void logout() {this.logado = false;}
 
+    public void setInfetado() {
+        this.infetado = true;
+    }
 
     public void adicionaUtilizador (Utilizador utilizador) {
         lockUtilizador.lock();

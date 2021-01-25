@@ -24,6 +24,22 @@ public class Localizacao {
         this.utilizadoresPassados = new TreeMap<String,Utilizador>();
     }
 
+    public ReentrantLock getLockLocalizacao() {
+        return lockLocalizacao;
+    }
+
+    public Condition getCondLocalizacao() {
+        return condLocalizacao;
+    }
+
+    public int getLocalizacaoX() {
+        return localizacaoX;
+    }
+
+    public int getLocalizacaoY() {
+        return localizacaoY;
+    }
+
     public void adicionaUtilizadorLocalizacao (Utilizador utilizador) {
         String username = utilizador.getUsername();
 
@@ -52,6 +68,9 @@ public class Localizacao {
         try {
             String username = utilizador.getUsername();
             this.utilizadoresAtuais.remove(username);
+
+            if (this.utilizadoresAtuais.size() == 0)
+                condLocalizacao.signalAll();
         } finally {
             lockLocalizacao.unlock();
         }

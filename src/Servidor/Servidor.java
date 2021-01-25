@@ -15,10 +15,12 @@ public class Servidor {
 
         MapasAplicacao mapasAplicacao = new MapasAplicacao(dimensao);
         ServerSocket ss = new ServerSocket(12345);
+        ServerSocket ss2 = new ServerSocket(54321);
 
         while (true) {
             Socket socket = ss.accept();
-            Thread worker = new Thread (new ServerWorker(socket, mapasAplicacao));
+            Socket socket2 = ss2.accept();
+            Thread worker = new Thread (new ServerWorker(socket, socket2, mapasAplicacao));
             worker.start();
         }
 

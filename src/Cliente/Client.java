@@ -7,16 +7,18 @@ import java.util.List;
 public class Client {
 
     private final BufferedReader systemIn;
-    private ClientStub currentUser;
+    private ClientStub clientStub;
     private ClientListener clientListener;
     private boolean admin;
+    private boolean infetado;
     //todo criar classe ClientListener
 
-    public Client() {
+    public Client() throws IOException {
         this.systemIn = new BufferedReader(new InputStreamReader(System.in));
-        this.currentUser = null;
-        this.clientListener = null;
+        this.clientStub = new ClientStub();
+        this.clientListener = new ClientListener();
         this.admin = false;
+        this.infetado = false;
     }
 
     public static void main(String[] args) {
@@ -31,7 +33,7 @@ public class Client {
 
 
     // Execução Menus
-    private void executaMenuLogin() throws IOException {
+    private void executaMenuLogin() throws IOException, InterruptedException {
         boolean continua = true;
 
         while (continua) {
@@ -42,43 +44,38 @@ public class Client {
                 switch (opcao) {
                     case 0: // Sair
                         continua = false;
+                        clientStub.endSession();
+                        clientListener.endSession();
                         System.out.println("Programa terminado com sucesso.");
                         break;
 
                     case 1: // Login
-                        currentUser = new ClientStub();
                         int respostaLogin = login();
 
                         if (respostaLogin != -1) {
                             System.out.println("Login com sucesso.");
-                            if (respostaLogin == 1) admin = true;
-                            clientListener = new Thread(new ClientListener());
-                            clientListener.start();
+                            if (respostaLogin / 10 == 1) admin = true;
+                            if (respostaLogin % 2 == 1) infetado = true;
+                            clientListener.run();
 
                             executaMenuPrincipal();
                         }
                         else {
                             System.out.println("Login sem sucesso.");
-                            currentUser.endSession();
-                            currentUser = null;
                         }
                         break;
 
                     case 2: // Registar
-                        currentUser = new ClientStub();
                         boolean respostaRegisto = registar();
 
                         if (respostaRegisto) {
                             System.out.println("Registo com sucesso.");
-                            clientListener = new Thread(new ClientListener());
-                            clientListener.start();
+                            clientListener.run();
 
                             executaMenuPrincipal();
                         }
                         else {
                             System.out.println("Registo sem sucesso.");
-                            currentUser.endSession();
-                            currentUser = null;
                         }
                         break;
 
@@ -95,25 +92,26 @@ public class Client {
 
     private void executaMenuPrincipal() throws IOException {
         boolean continua = true;
-        // todo boolean infetado
 
         while (continua) {
             try {
                 showMenuPrincipal();
                 int opcao = Integer.parseInt(systemIn.readLine());
+                if (infetado && opcao != 0) opcao = -1;
 
                 switch (opcao) {
+                    case -1:
+                        System.out.println("Não pode comunicar com o servidor pois está infetado");
+                        break;
+
                     case 0: // Logout
-                        boolean respostaLogout = currentUser.logout();
+                        boolean respostaLogout = clientStub.logout();
 
                         if (respostaLogout) {
                             continua = false;
                             System.out.println("Logout efetuado com sucesso.");
-                            currentUser.endSession();
-                            currentUser = null;
-                            clientListener.interrupt();
-                            clientListener = null;
                             admin = false;
+                            infetado = false;
                         }
                         else {
                             System.out.println("Logout efetuado sem sucesso.");
@@ -137,6 +135,24 @@ public class Client {
                             System.out.println("Localização pedida possui " + numeroPessoasLocalizacao + " Utilizadores no momento!");
                         } else {
                             System.out.println("Localização pedida não pode ser verificada.");
+                        }
+                        break;
+
+                    case 3: // Consulta quando uma Localização fica livre
+                        boolean consultouLivreLocalizacao = consultaLocalizacaoLivre();
+                        if (!consultouLivreLocalizacao) {
+                            System.out.println("Localização não pode ser verificada");
+                        }
+                        break;
+
+                    case 4: // Notificar infeção
+                        boolean notificouInfecao = notificarInfecao();
+                        if (notificouInfecao) {
+                            infetado = true;
+                            System.out.println("ESTÁ INFETADO!!! Não poderá usar mais o sistema!!!!");
+                        }
+                        else {
+                            System.out.println("Infeção não foi notificada corretamente.");
                         }
                         break;
 
@@ -169,7 +185,7 @@ public class Client {
         System.out.print("Y: ");
         int y = Integer.parseInt(systemIn.readLine());
 
-        return (currentUser.atualizarLocalizacao(x, y));
+        return (clientStub.atualizarLocalizacao(x, y));
     }
 
     private int consultaNumeroPessoasLocalizacao() throws IOException, NumberFormatException {
@@ -179,11 +195,11 @@ public class Client {
         System.out.print("Y: ");
         int y = Integer.parseInt(systemIn.readLine());
 
-        return (currentUser.consultaNumeroPessoasLocalizacao(x, y));
+        return (clientStub.consultaNumeroPessoasLocalizacao(x, y));
     }
 
     private String consultarMapaLocalizacoes() throws IOException {
-        return (currentUser.consultarMapaLocalizacoes());
+        return (clientStub.consultarMapaLocalizacoes());
     }
 
     private void showMapaLocalizacoes (String mapa) throws NumberFormatException {
@@ -207,6 +223,20 @@ public class Client {
         }
     }
 
+    private boolean consultaLocalizacaoLivre () throws IOException, NumberFormatException {
+        System.out.println("Localização a verificar se está livre");
+        System.out.print("X: ");
+        int x = Integer.parseInt(systemIn.readLine());
+        System.out.print("Y: ");
+        int y = Integer.parseInt(systemIn.readLine());
+
+        return (clientStub.consultaLocalizacaoLivre(x, y));
+    }
+
+    public boolean notificarInfecao() throws IOException {
+        return (clientStub.notificarInfecao());
+    }
+
 
 
     // Opções Menu Login
@@ -217,7 +247,7 @@ public class Client {
         System.out.print("Password: ");
         String password = systemIn.readLine();
 
-        return (currentUser.login(user, password));
+        return (clientStub.login(user, password));
     }
 
     private boolean registar() throws IOException, NumberFormatException {
@@ -233,7 +263,7 @@ public class Client {
         System.out.print("Y: ");
         int y = Integer.parseInt(systemIn.readLine());
 
-        return (currentUser.registar(user, password, x, y));
+        return (clientStub.registar(user, password, x, y));
     }
 
 
@@ -251,6 +281,8 @@ public class Client {
         System.out.println("\n *** Menu Principal *** ");
         System.out.println("1 - Atualizar Localização");
         System.out.println("2 - Consulta Número de Pessoas numa Localizacao");
+        System.out.println("3 - Consulta quando uma Localização fica livre");
+        System.out.println("4 - Notificar infeção");
         if (admin)
             System.out.println("6 - Consulta Mapa de Localizações");
         System.out.println("0 - Logout");
